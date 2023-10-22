@@ -1,8 +1,4 @@
-
-this project will be reconstructed using Optix.
-
-
-# <img src="Resources/Icons/logo.png" width="200" >
+# <img src="Resources/Images/logo.png" width="200" > Crystal
 
 > <font size=5>Crystal - A `modern`, `fashionable`, `high-quality` 3D visualization tool for medical images</font>
 
