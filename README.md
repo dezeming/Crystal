@@ -1,4 +1,4 @@
-# <img src="Resources/Images/logo.png" width="200" > Crystal
+# <img src="Resources/Images/logo.png" width="150" >
 
 > <font size=5>Crystal - A `modern`, `fashionable`, `high-quality` 3D visualization tool for medical images</font>
 
@@ -22,25 +22,25 @@
 
 ## Dependent third-party libraries
 
-### <img src="Resources/Icons/logo-qt.png" width="50" >
+### <img src="Resources/Images/logo-qt.png" width="50" >
 
 > **Qt**   
 > https://www.qt.io/product
 
 
-> <img src="Resources/Icons/logo-cuda.png" width="90" >
+> <img src="Resources/Images/logo-cuda.png" width="90" >
 >
 > **Nvidia Cuda** version (equal to or greater than) 11.0   
 > https://developer.nvidia.com/cuda-toolkit
 
 
-> <img src="Resources/Icons/logo-optix.png" width="90" >
+> <img src="Resources/Images/logo-optix.png" width="90" >
 >
 > **Nvidia Optix** version (equal to or greater than) 11.0   
 > https://developer.nvidia.com/cuda-toolkit
 
 
-> <img src="Resources/Icons/logo-openexr.png" width="90" >
+> <img src="Resources/Images/logo-openexr.png" width="90" >
 >
 > **OpenEXR** version (equal to or greater than) 11.0   
 > https://openexr.com/en/latest/
