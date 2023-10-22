@@ -40,7 +40,7 @@
 > https://developer.nvidia.com/cuda-toolkit
 
 
-### <img src="Resources/Images/logo-openexr.png" width="90" >
+### <img src="Resources/Images/logo-openexr.png" width="130" >
 
 > **OpenEXR** version (equal to or greater than) 11.0   
 > https://openexr.com/en/latest/
