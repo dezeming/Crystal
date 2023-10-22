@@ -28,20 +28,20 @@
 > https://www.qt.io/product
 
 
-> <img src="Resources/Images/logo-cuda.png" width="90" >
->
+### <img src="Resources/Images/logo-cuda.png" width="90" >
+
 > **Nvidia Cuda** version (equal to or greater than) 11.0   
 > https://developer.nvidia.com/cuda-toolkit
 
 
-> <img src="Resources/Images/logo-optix.png" width="90" >
->
+### <img src="Resources/Images/logo-optix.png" width="90" >
+
 > **Nvidia Optix** version (equal to or greater than) 11.0   
 > https://developer.nvidia.com/cuda-toolkit
 
 
-> <img src="Resources/Images/logo-openexr.png" width="90" >
->
+### <img src="Resources/Images/logo-openexr.png" width="90" >
+
 > **OpenEXR** version (equal to or greater than) 11.0   
 > https://openexr.com/en/latest/
 
