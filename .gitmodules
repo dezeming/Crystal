@@ -1,0 +1,10 @@
+[submodule "CrystalThirdParty/zlib"]
+	path = CrystalThirdParty/zlib
+	url = https://github.com/mitsuba-renderer/zlib.git
+[submodule "CrystalThirdParty/stb"]
+	path = CrystalThirdParty/stb
+	url = https://github.com/nothings/stb.git
+[submodule "CrystalThirdParty/openexr"]
+	path = CrystalThirdParty/openexr
+	url = https://github.com/mmp/openexr.git
+	branch = zlibstatic-export-workaround

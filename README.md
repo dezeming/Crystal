@@ -9,7 +9,7 @@
 ---
 # <img src="Resources/Images/crystal.png" width="40" > Build this project
 
-## Computer configuration
+## Computer hardware and software configuration
 
 |  Device   |  Minimum configuration | Recommended settings ((equal to or greater than)) |
 |  ----  | ----  | ----  |
@@ -43,7 +43,7 @@
 > https://developer.nvidia.com/rtx/ray-tracing/optix
 
 
-### <img src="Resources/Images/logo-openexr.png" width="130" >
+### <img src="Resources/Images/logo-openexr.png" width="160" >
 
 > **OpenEXR**
 > https://openexr.com/en/latest/
