@@ -17,6 +17,9 @@
 | CPU RAM | 16GB | 32GB |
 | GPU  | Nvidia RTX 2060 | Nvidia RTX 4070 |
 | GPU VRAM | - | - |
+
+|  Software   |  Minimum version | Recommended settings ((equal to or greater than)) |
+|  ----  | ----  | ----  |
 | Visual Studio | 2019 | 2019 |
 | OpenGL | version 4.3 | - |
 
@@ -24,7 +27,7 @@
 
 ### <img src="Resources/Images/logo-qt.png" width="50" >
 
-> **Qt**   
+> **Qt** version (equal to or greater than) 6.0   
 > https://www.qt.io/product
 
 
@@ -37,12 +40,12 @@
 ### <img src="Resources/Images/logo-optix.png" width="90" >
 
 > **Nvidia Optix** version (equal to or greater than) 11.0   
-> https://developer.nvidia.com/cuda-toolkit
+> https://developer.nvidia.com/rtx/ray-tracing/optix
 
 
 ### <img src="Resources/Images/logo-openexr.png" width="130" >
 
-> **OpenEXR** version (equal to or greater than) 11.0   
+> **OpenEXR**
 > https://openexr.com/en/latest/
 
 
@@ -52,11 +55,11 @@
 > **Qt directory**
 > - set(Qt6_DIR "D:/DevTools/Qt6/6.2.4/msvc2019_64/" CACHE PATH "qt5 cmake dir") 
 
-> **OPTIX directory**
-> - set(OPTIX_DIR "D:/DevTools/VTK8-Install")   
+> **Optix directory**
+> - set(Optix_DIR "D:/DevTools/VTK8-Install")   
 
 > **OpenEXR directory**
-> - set
+> - set(OpenEXR_DIR "D:/DevTools/VTK8-Install")
 
 ---
 # <img src="Resources/Images/crystal.png" width="40" > Supported Features
