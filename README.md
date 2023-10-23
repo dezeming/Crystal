@@ -25,6 +25,8 @@
 
 ## Dependent third-party libraries
 
+Qt, Cuda and Optix need to be installed by users, and other libraries will be loaded during the repository clone and compiled into the project.
+
 ### <img src="Resources/Images/logo-qt.png" width="50" >
 
 > **Qt** version (equal to or greater than) 6.0   
@@ -48,6 +50,15 @@
 > **OpenEXR**
 > https://openexr.com/en/latest/
 
+## Clone and Build the project
+
+Using GitBash, enter:
+
+> - git clone --recursive git@github.com:dezeming/Crystal.git
+
+If the project has already been cloned, but there are no clone sub modules, enter the project root directory in GitBash and call:
+
+> - git submodule update --init --recursive
 
 
 ## Corresponding CMake path that needs to be modified (in CMakeLists.txt)
@@ -58,8 +69,6 @@
 > **Optix directory**
 > - set(Optix_DIR "D:/DevTools/VTK8-Install")   
 
-> **OpenEXR directory**
-> - set(OpenEXR_DIR "D:/DevTools/VTK8-Install")
 
 ---
 # <img src="Resources/Images/crystal.png" width="40" > Supported Features
