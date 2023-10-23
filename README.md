@@ -39,7 +39,7 @@
 
 ### <img src="Resources/Images/logo-optix.png" width="90" >
 
-> **Nvidia Optix** version (equal to or greater than) 11.0   
+> **Nvidia Optix7** version (equal to or greater than) 7.4   
 > https://developer.nvidia.com/rtx/ray-tracing/optix
 
 
