@@ -1,19 +1,35 @@
+# ======================================================================== #
+# Copyright 2023 Dezeming                                                  #
+#                                                                          #
+# Licensed under the Apache License, Version 2.0 (the "License");          #
+# you may not use this file except in compliance with the License.         #
+# You may obtain a copy of the License at                                  #
+#                                                                          #
+#     http://www.apache.org/licenses/LICENSE-2.0                           #
+#                                                                          #
+# Unless required by applicable law or agreed to in writing, software      #
+# distributed under the License is distributed on an "AS IS" BASIS,        #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. #
+# See the License for the specific language governing permissions and      #
+# limitations under the License.                                           #
+# ======================================================================== #
+
+if (POLICY CMP0048)
+  cmake_policy(SET CMP0048 NEW)
+endif (POLICY CMP0048)
+if (POLICY CMP0077)
+    cmake_policy(SET CMP0077 NEW)
+endif()
 cmake_minimum_required(VERSION 3.1)
 
-set(CMAKE_CXX_STANDARD 11)
 
-project(Crystal)
+project(Crystal VERSION 1.0.1)
 
 ########################################################################
 ################### Third party integration library ####################
 ########################################################################
 
 ########## Qt Lib ##########
-
-# set Qt moc rcc uic
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -78,6 +94,8 @@ endif()
 
 ############ Other Libs ###########
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # Build into static libraries
 set (BUILD_SHARED_LIBS OFF)
 
@@ -101,19 +119,18 @@ add_subdirectory (${zlib_dir})
 
 set (ZLIB_LIBRARIES zlibstatic)
 set (ZLIB_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+set_property (TARGET zlibstatic PROPERTY FOLDER "CrystalThirdParty")
+set_target_properties(zlibstatic PROPERTIES FOLDER "CrystalThirdParty")
 
 # try to make openexr happy about this...
 set (ZLIB_LIBRARY zlibstatic)
 set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
 set (ZLIB_FOUND TRUE)
-
-set_property (TARGET zlibstatic PROPERTY FOLDER "CrystalThirdParty")
-
 add_library (ZLIB::ZLIB ALIAS zlibstatic)
 include_directories(${ZLIB_INCLUDE_DIRS}) 
-
 set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
 set (ZLIB_LIBRARIES ${ZLIB_LIBARIES})
+
 
 ###########################################################################
 # OpenEXR
@@ -126,13 +143,15 @@ set (OPENEXR_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
 set (ILMBASE_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
 set (PYILMBASE_ENABLE             OFF CACHE BOOL " " FORCE)
 set (OPENEXR_BUILD_UTILS          OFF CACHE BOOL " " FORCE)
-
 add_subdirectory(${openexr_dir})
 
 set_property (
 TARGET IexMath IlmThread Half Iex Imath IlmImf HalfTest IexTest
 IlmImfExamples IlmImfTest IlmImfUtil IlmImfUtilTest ImathTest
 PROPERTY FOLDER "CrystalThirdParty/OpenEXR/")
+set_target_properties(IexMath IlmThread Half Iex Imath IlmImf HalfTest IexTest
+IlmImfExamples IlmImfTest IlmImfUtil IlmImfUtilTest ImathTest 
+PROPERTIES FOLDER "CrystalThirdParty/OpenEXR/")
 
 set (OPENEXR_INCLUDE
   ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/openexr/IlmBase/Imath
@@ -142,7 +161,6 @@ set (OPENEXR_INCLUDE
   ${CMAKE_CURRENT_BINARY_DIR}/CrystalThirdParty/openexr/IlmBase/config
   ${CMAKE_CURRENT_BINARY_DIR}/CrystalThirdParty/openexr/OpenEXR/config
 )
-
 set (OPENEXR_LIBS OpenEXR::IlmImf IlmBase::Imath IlmBase::Half)
 
 ###########################################################################
@@ -171,16 +189,13 @@ set (BUILD_SHARED_LIBS OFF)
 # macros predefined 
 add_compile_definitions(_EXPORTING)
 
-# 程序输出目录
+# Program output directory
 set(publish_debug ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
-
 set(publish_release ${CMAKE_CURRENT_BINARY_DIR}/Release)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${publish_release})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${publish_release})
-
-
 #set(publish_relwithdebuginfo ${CMAKE_CURRENT_BINARY_DIR}/Relwithdebuginfo)
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
@@ -191,9 +206,9 @@ endif()
 if(NOT DEFINED CMAKE_RELEASE_POSTFIX)
 set(CMAKE_RELEASE_POSTFIX "_r")
 endif()
-if(NOT DEFINED CMAKE_RELWITHDEBINFO_POSTFIX)
-set(CMAKE_RELWITHDEBINFO_POSTFIX "_rd")
-endif()
+#if(NOT DEFINED CMAKE_RELWITHDEBINFO_POSTFIX)
+#set(CMAKE_RELWITHDEBINFO_POSTFIX "_rd")
+#endif()
 
 # Utility
 set(Utility
@@ -236,6 +251,11 @@ target_compile_features(CrystalAlgrithm PUBLIC cuda_std_11)
 ########################################################################
 ######################### Crystal GUI Project ##########################
 ########################################################################
+
+# set Qt moc rcc uic
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 # Main
 set(Main
@@ -301,11 +321,10 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT C
 # Set to console mode to output content to the cmd
 set_target_properties(CrystalGUI PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
 set_target_properties(CrystalGUI PROPERTIES COMPILE_DEFINITIONS_RELEASE "_CONSOLE")
-set_target_properties(CrystalGUI PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:CONSOLE")
-set_target_properties(CrystalGUI PROPERTIES COMPILE_DEFINITIONS_RELWITHDEBINFO "_CONSOLE")
 set_target_properties(CrystalGUI PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
 set_target_properties(CrystalGUI PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:CONSOLE")
-
+#set_target_properties(CrystalGUI PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:CONSOLE")
+#set_target_properties(CrystalGUI PROPERTIES COMPILE_DEFINITIONS_RELWITHDEBINFO "_CONSOLE")
 
 file(GLOB Resources "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*")
 file(COPY ${Resources} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Resources/)
