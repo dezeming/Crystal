@@ -4,4 +4,3 @@
 [submodule "CrystalThirdParty/stb"]
 	path = CrystalThirdParty/stb
 	url = https://github.com/nothings/stb.git
-
