@@ -64,10 +64,10 @@ If the project has already been cloned, but there are no clone sub modules, ente
 ## Corresponding CMake path that needs to be modified (in CMakeLists.txt)
 
 > **Qt directory**
-> - set(Qt6_DIR "D:/DevTools/Qt6/6.2.4/msvc2019_64/" CACHE PATH "qt5 cmake dir") 
+> - set(Qt_DIR "D:/DevTools/Qt/6.2.4/msvc2019_64/" CACHE PATH "qt6 cmake dir")
 
 > **Optix directory**
-> - set(Optix_DIR "D:/DevTools/VTK8-Install")   
+> - set(Optix_SDK "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.6.0/")
 
 
 ---
