@@ -19,8 +19,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Qt6Config.cmake
-set(Qt6_DIR "D:/DevTools/Qt6/6.2.4/msvc2019_64/" CACHE PATH "qt6 cmake dir")
-set(CMAKE_PREFIX_PATH ${Qt6_DIR})
+set(Qt_DIR "D:/DevTools/Qt/6.2.4/msvc2019_64/" CACHE PATH "qt6 cmake dir")
+list(APPEND CMAKE_PREFIX_PATH ${Qt_DIR})
 find_package(Qt6 COMPONENTS 
 	Widgets 
 	Gui
@@ -46,21 +46,6 @@ SET(QT6_LIBS
 
 # set(CMAKE_CXX_FLAGS "-mwindows")
 
-############ OpenEXR Lib ###########
-
-
-
-########## OpenMP Lib ##########
-
-find_package(OpenMP REQUIRED)
-if(OpenMP_FOUND)
-	message(STATUS "found openmp") 
-	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS}, ${OPENMP_C_FLAGS})
-   	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}, ${OPENMP_CXX_FLAGS})
-else()
-   	message(FATAL_ERROR "openmp not found!")
-endif()
-
 ########## Nvidia CUDA Lib ##########
 
 find_package(CUDA REQUIRED)
@@ -77,15 +62,102 @@ enable_language(CUDA)
 
 ########## Nvidia Optix Lib ##########
 
-set(Optix_SDK "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.5.0/")
+set(Optix_SDK "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.6.0/")
 set(Optix_INCLUDE_DIR ${Optix_SDK}include)
+
+########## OpenMP Lib ##########
+
+find_package(OpenMP REQUIRED)
+if(OpenMP_FOUND)
+	message(STATUS "found openmp") 
+	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS}, ${OPENMP_C_FLAGS})
+   	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}, ${OPENMP_CXX_FLAGS})
+else()
+   	message(FATAL_ERROR "openmp not found!")
+endif()
+
+############ Other Libs ###########
+
+# Build into static libraries
+set (BUILD_SHARED_LIBS OFF)
+
+if (MSVC)
+  add_definitions(_CRT_SECURE_NO_WARNINGS)
+endif ()
+
+# stb
+
+set (STB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/stb)
+
+###########################################################################
+# zlib
+
+set(zlib_dir ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib/)
+
+# Build zlib
+set (ZLIB_BUILD_STATIC_LIBS ON CACHE BOOL " " FORCE)
+set (ZLIB_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
+add_subdirectory (${zlib_dir})
+
+set (ZLIB_LIBRARIES zlibstatic)
+set (ZLIB_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+
+# try to make openexr happy about this...
+set (ZLIB_LIBRARY zlibstatic)
+set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+set (ZLIB_FOUND TRUE)
+
+set_property (TARGET zlibstatic PROPERTY FOLDER "CrystalThirdParty")
+
+add_library (ZLIB::ZLIB ALIAS zlibstatic)
+include_directories(${ZLIB_INCLUDE_DIRS}) 
+
+set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+set (ZLIB_LIBRARIES ${ZLIB_LIBARIES})
+
+###########################################################################
+# OpenEXR
+
+set(openexr_dir ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/openexr/)
+
+set (ILMBASE_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
+set (OPENEXR_NAMESPACE_VERSIONING OFF CACHE BOOL " " FORCE)
+set (OPENEXR_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
+set (ILMBASE_BUILD_SHARED_LIBS    OFF CACHE BOOL " " FORCE)
+set (PYILMBASE_ENABLE             OFF CACHE BOOL " " FORCE)
+set (OPENEXR_BUILD_UTILS          OFF CACHE BOOL " " FORCE)
+
+add_subdirectory(${openexr_dir})
+
+set_property (
+TARGET IexMath IlmThread Half Iex Imath IlmImf HalfTest IexTest
+IlmImfExamples IlmImfTest IlmImfUtil IlmImfUtilTest ImathTest
+PROPERTY FOLDER "CrystalThirdParty/OpenEXR/")
+
+set (OPENEXR_INCLUDE
+  ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/openexr/IlmBase/Imath
+  ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/openexr/IlmBase/Half
+  ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/openexr/IlmBase/Iex
+  ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/openexr/OpenEXR/IlmImf
+  ${CMAKE_CURRENT_BINARY_DIR}/CrystalThirdParty/openexr/IlmBase/config
+  ${CMAKE_CURRENT_BINARY_DIR}/CrystalThirdParty/openexr/OpenEXR/config
+)
+
+set (OPENEXR_LIBS OpenEXR::IlmImf IlmBase::Imath IlmBase::Half)
+
+###########################################################################
 
 # include files
 INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
+	# Qt
 	${QT_INCLUDE_DIR}
-	${OPENEXR_INCLUDE_DIRS}
+	# Others
+	${STB_INCLUDE}
+	${ZLIB_INCLUDE_DIRS}
+	${OPENEXR_INCLUDE}
+	# Nvidia
 	${CUDA_INCLUDE_DIRS}
 	${Optix_INCLUDE_DIR}
 )
@@ -94,20 +166,24 @@ INCLUDE_DIRECTORIES(
 ###################### Crystal Algrithm Project ########################
 ########################################################################
 
+set (BUILD_SHARED_LIBS OFF)
+
 # macros predefined 
 add_compile_definitions(_EXPORTING)
 
 # 程序输出目录
-set(publish_debug ${CMAKE_CURRENT_BINARY_DIR}/Debug) 
-set(publish_release ${CMAKE_CURRENT_BINARY_DIR}/Release)
-set(publish_relwithdebuginfo ${CMAKE_CURRENT_BINARY_DIR}/Relwithdebuginfo)
-
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${publish_release})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${publish_release})
+set(publish_debug ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
+
+set(publish_release ${CMAKE_CURRENT_BINARY_DIR}/Release)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${publish_release})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${publish_release})
+
+
+#set(publish_relwithdebuginfo ${CMAKE_CURRENT_BINARY_DIR}/Relwithdebuginfo)
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
 
 if(NOT DEFINED CMAKE_DEBUG_POSTFIX)
 set(CMAKE_DEBUG_POSTFIX "_d")
@@ -121,25 +197,32 @@ endif()
 
 # Utility
 set(Utility
-	CrystalAlgrithm/Utility/Common.cuh
+	CrystalAlgrithm/Utility/cpu_Common.hpp
+	CrystalAlgrithm/Utility/cpu_Common.hpp
+	CrystalAlgrithm/Utility/cuda_common.cuh
+	CrystalAlgrithm/Utility/cuda_common.cu
+	CrystalAlgrithm/Utility/timerRandom.hpp
+	CrystalAlgrithm/Utility/timerRandom.cpp
 )
 # Make the Utility group
 SOURCE_GROUP("Utility" FILES ${Utility})
 
 #set(CMAKE_BUILD_TYPE "debug")
 
-cuda_add_library(CrystalAlgrithm SHARED 
+cuda_add_library(CrystalAlgrithm STATIC 
 	${Utility}
 )
+# Do not generate dynamic link libraries
+#cuda_add_library(CrystalAlgrithm SHARED ${Utility} )
 
 SET(CrystalAlgrithm_LIBRARY_debug 
-	# VTK Lib
-	${VTK_Debug_Lib_DIR}/*.lib
+	${ZLIB_LIBRARIES}
+	${OPENEXR_LIBS}
 )
 
 SET(CrystalAlgrithm_LIBRARY_release 
-	# VTK Lib
-	${VTK_Release_Lib_DIR}/*.lib
+	${ZLIB_LIBRARIES}
+	${OPENEXR_LIBS}
 )
 
 target_link_libraries (CrystalAlgrithm 
@@ -157,17 +240,27 @@ target_compile_features(CrystalAlgrithm PUBLIC cuda_std_11)
 # Main
 set(Main
 	CrystalGUI/Main/main.cpp
-	CrystalGUI/Main/MainWindow.h
+	CrystalGUI/Main/MainWindow.hpp
 	CrystalGUI/Main/MainWindow.cpp
 )
 # Make the Main group
 SOURCE_GROUP("Main" FILES ${Main})
 
+# Dispaly
+set(Dispaly
+	CrystalGUI/Dispaly/DisplayWidget.hpp
+	CrystalGUI/Dispaly/DisplayWidget.cpp
+)
+# Make the Dispaly group
+SOURCE_GROUP("Dispaly" FILES ${Dispaly})
+
 # Utility
 set(Utility
-	CrystalGUI/Utility/Utility.h
+	CrystalGUI/Utility/Utility.hpp
 	CrystalGUI/Utility/Utility.cpp
-	CrystalGUI/Utility/Common.h
+	CrystalGUI/Utility/Common.hpp
+	CrystalGUI/Utility/Status.hpp
+	CrystalGUI/Utility/Status.cpp
 )
 # Make the Utility group
 SOURCE_GROUP("Utility" FILES ${Utility})
