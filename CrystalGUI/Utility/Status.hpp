@@ -19,6 +19,10 @@
 
 #ifndef __Status_hpp__
 #define __Status_hpp__
+#include "Common.hpp"
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
 
 #include <QObject>
 

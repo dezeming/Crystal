@@ -17,6 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __DataPresentDockWidget_hpp__
 #define __DataPresentDockWidget_hpp__
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
+
 
 #include <QDockWidget>
 #include <QFrame>

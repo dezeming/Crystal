@@ -16,6 +16,9 @@
 
     Github site: <https://github.com/dezeming/Crystal>
 */
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
 
 #include "MainWindow.hpp"
 
@@ -154,6 +157,7 @@ void InitialMainWindow::setupDock(void) {
     m_DataPresentDockWidget = new DataPresentDockWidget;
     addDockWidget(Qt::LeftDockWidgetArea, m_DataPresentDockWidget);
     showMemoryInfo();
+    showCudaDevicesInfo();
 }
 
 

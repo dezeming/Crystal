@@ -24,6 +24,7 @@ cmake_minimum_required(VERSION 3.1)
 
 
 project(Crystal VERSION 1.0.1)
+project(Crystal LANGUAGES CXX CUDA)
 
 ########################################################################
 ################### Third party integration library ####################
@@ -189,10 +190,10 @@ add_compile_definitions(_EXPORTING)
 # Program output directory
 set(publish_debug ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
 set(publish_release ${CMAKE_CURRENT_BINARY_DIR}/Release)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${publish_release})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${publish_release})
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${publish_release})
 #set(publish_relwithdebuginfo ${CMAKE_CURRENT_BINARY_DIR}/Relwithdebuginfo)
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
@@ -236,7 +237,7 @@ SET(CrystalAlgrithm_LIBRARY_release
 )
 
 target_link_libraries (CrystalAlgrithm 
-						debug ${CrystalAlgrithm_LIBRARY_debug}
+						#debug ${CrystalAlgrithm_LIBRARY_debug}
 						optimized ${CrystalAlgrithm_LIBRARY_release} )
 
 set_target_properties(CrystalAlgrithm PROPERTIES CUDA_ARCHITECTURES "35;52")
@@ -285,6 +286,7 @@ set(DataPresent
 	CrystalGUI/DataPresent/DataPresentDockWidget.hpp
 	CrystalGUI/DataPresent/DataPresentDockWidget.cpp
 	CrystalGUI/DataPresent/MemoryRecord.cpp
+	CrystalGUI/DataPresent/DevicesRecord.cpp
 	CrystalGUI/DataPresent/DataTreeWidget.hpp
 	CrystalGUI/DataPresent/DataTreeWidget.cpp
 )
@@ -292,8 +294,7 @@ set(DataPresent
 SOURCE_GROUP("DataPresent" FILES ${DataPresent})
 
 # Create executable
-add_executable(CrystalGUI
-	WIN32
+add_executable(CrystalGUI WIN32
 	${Main}
 	${Display}
 	${Utility}
@@ -308,7 +309,9 @@ SET(LIBRARY_debug
 	# OpenGL
 	OpenGL::GL
 	# Crystal Algrithm Lib
+	${publish_debug}/CrystalAlgrithm_d.lib
 	${publish_debug}/*.lib
+	${CUDA_LIBRARIES}
 )
 
 SET(LIBRARY_release 
@@ -317,13 +320,16 @@ SET(LIBRARY_release
 	# OpenGL
 	OpenGL::GL
 	# Crystal Algrithm Lib
+	${publish_release}/CrystalAlgrithm_r.lib
 	${publish_release}/*.lib
+	${CUDA_LIBRARIES}
 )
 
 target_link_libraries (CrystalGUI PRIVATE
-						debug ${LIBRARY_debug}
+						#debug ${LIBRARY_debug}
 						optimized ${LIBRARY_release} 
 						)
+set_target_properties(CrystalGUI PROPERTIES OUTPUT_NAME "Crystal")
 
 # set CrystalGUI as start up project
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT CrystalGUI)

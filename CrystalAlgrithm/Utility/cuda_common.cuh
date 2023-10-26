@@ -1,26 +1,30 @@
-/**
-Copyright (C) <2023>  <Dezeming>
+/*
+    Copyright (C) <2023>  <Dezeming>  <feimos@mail.ustc.edu.cn>
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or any
+    later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    Github site: <https://github.com/dezeming/Crystal>
 */
 
 #include <cuda.h>
 #include <cuda_runtime.h>
 
+#include <iostream>
 #include <string>
 
-namespace CudaTools {
+namespace CrystalAlgrithm {
+
 
 #define HOST_AND_DEVICE __host__ __device__
 #define HOST __host__
@@ -37,13 +41,28 @@ namespace CudaTools {
 #define COUT_YELLOW(STRING) std::cout<<"\033[1;33m"<<STRING<<"\033[m"
 #define COUT_BLUE(STRING) std::cout<<"\033[1;34m"<<STRING<<"\033[m"
 
-
 std::string getCudaErrorStr(const char* error, const char* file, int line);
 
 inline bool getCudaError(cudaError_t err);
 inline bool getCudaError(cudaError_t err, const char* file, int line);
 
 #define Get_CUDA_ERROR( err ) (getCudaError( err, __FILE__, __LINE__ ))
+
+
+inline void getCpuError(std::string err, const char* file, int line) {
+	COUT_RED("Error: ") << std::string(err) + " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+inline void getCpuWarning(std::string warning, const char* file, int line) {
+	COUT_BLUE("Warning: ") << std::string(warning) + " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+inline void getCpuInfo(std::string info, const char* file, int line) {
+	COUT_GREEN("Info: ") << std::string(info) + " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+#define Print_CPU_Warning( warning ) (getCpuWarning( warning, __FILE__, __LINE__ ))
+#define Print_CPU_Error( err ) (getCpuError( err, __FILE__, __LINE__ ))
+#define Print_CPU_Info( info ) (getCpuInfo( info, __FILE__, __LINE__ ))
+
+
 
 }
 

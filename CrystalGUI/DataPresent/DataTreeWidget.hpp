@@ -20,6 +20,9 @@ Github site: <https://github.com/dezeming/Crystal>
 #pragma once
 #ifndef __DATATREEWIDGET_H__
 #define __DATATREEWIDGET_H__
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
 
 #include <Qtreewidget>
 

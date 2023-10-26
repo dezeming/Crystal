@@ -16,9 +16,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Github site: <https://github.com/dezeming/Crystal>
 */
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
 
 #ifndef __Utility_h__
 #define __Utility_h__
+#undef _EXPORTING
+
 
 namespace CrystalGUI {
 

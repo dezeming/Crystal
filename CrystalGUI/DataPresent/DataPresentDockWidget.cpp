@@ -14,9 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
 
-#include "DataTreeWidget.hpp"
 #include "DataPresentDockWidget.hpp"
+#include "DataTreeWidget.hpp"
 
 #include "CrystalGUI/utility/Status.hpp"
 #include "CrystalGUI/Utility/Common.hpp"

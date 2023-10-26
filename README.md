@@ -69,6 +69,10 @@ If the project has already been cloned, but there are no clone sub modules, ente
 > **Optix directory**
 > - set(Optix_SDK "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.6.0/")
 
+## Some Bugs need to be solved
+
+> - Compilation will generate Crystal.lib, which needs to be removed in order to generate a new executable program in Visual Studio.
+> - When the executable program is not called in Visual Studio, colored fonts will not be output, but chaotic characters will be output.
 
 ---
 # <img src="Resources/Images/crystal.png" width="40" > Supported Features

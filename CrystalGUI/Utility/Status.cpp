@@ -16,6 +16,9 @@
 
     Github site: <https://github.com/dezeming/Crystal>
 */
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
 
 #include "Status.hpp"
 

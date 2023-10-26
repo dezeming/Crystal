@@ -19,8 +19,9 @@ Github site: <https://github.com/dezeming/Crystal>
 
 #ifndef __Common_hpp__
 #define __Common_hpp__
-
+#ifdef CRYSTAL_Using_Shared_Lib
 #undef _EXPORTING
+#endif
 
 #include <iostream>
 #include <string>
@@ -55,6 +56,7 @@ inline void getGuiInfo(std::string info, const char* file, int line) {
 
 void showMemoryInfo(void);
 
+void showCudaDevicesInfo(void);
 
 
 

@@ -19,6 +19,9 @@
 
 #ifndef __DisplayWidget_h__
 #define __DisplayWidget_h__
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
 
 #include "CrystalGUI/Utility/Common.hpp"
 

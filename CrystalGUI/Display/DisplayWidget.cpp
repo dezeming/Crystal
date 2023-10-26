@@ -16,12 +16,16 @@
 
     Github site: <https://github.com/dezeming/Crystal>
 */
+#ifdef CRYSTAL_Using_Shared_Lib
+#undef _EXPORTING
+#endif
+
+#include "DisplayWidget.hpp"
 
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
 #include <QFile>
 
-#include "DisplayWidget.hpp"
 #include "CrystalGUI/Utility/Common.hpp"
 
 #define DisplayWidget_Debug true
