@@ -26,8 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <string>
 
-#include <opencv2/opencv.hpp>
-
 namespace cputools {
 
 #define COUT_RED(STRING) std::cout<<"\033[1;31m"<<STRING<<"\033[0m"
@@ -39,12 +37,19 @@ inline void getCpuError(std::string err, const char* file, int line) {
 	COUT_RED("Error: ") << std::string(err) + " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
 }
 
-inline void getCpuWarning(std::string err, const char* file, int line) {
-	COUT_BLUE("Warning: ") << std::string(err) + " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+inline void getCpuWarning(std::string warning, const char* file, int line) {
+	COUT_BLUE("Warning: ") << std::string(warning) + " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
 }
 
-#define Print_CPU_Warning( err ) (getCpuWarning( err, __FILE__, __LINE__ ))
+inline void getCpuInfo(std::string info, const char* file, int line) {
+	COUT_GREEN("Info: ") << std::string(info) + " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+
+#define Print_CPU_Warning( warning ) (getCpuWarning( warning, __FILE__, __LINE__ ))
 #define Print_CPU_Error( err ) (getCpuError( err, __FILE__, __LINE__ ))
+#define Print_CPU_Info( info ) (getCpuInfo( info, __FILE__, __LINE__ ))
+
+
 
 inline void Error_InconsistentImageSizes() {
 	Print_CPU_Error("Inconsistent image sizes");

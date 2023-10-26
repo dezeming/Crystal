@@ -14,19 +14,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    Github site: <https://github.com/feimos32/Crystal>
+    Github site: <https://github.com/dezeming/Crystal>
 */
 
-#include "MainWindow.h"
-#include "CrystalGUI/DebugTools/DebugStd.h"
+#include "MainWindow.hpp"
 
-#include "CrystalAlgrithm/Basic/Export_dll.cuh"
+// Wdiget
+#include "CrystalGUI/Display/DisplayWidget.hpp"
 
-
-#include "CrystalAlgrithm/Basic/Transform.cuh"
-
-#include "../../CrystalGUI/QtDataMapper/QtTF_1D_Trapezoidal.h"
-#include "../../CrystalGUI/QtDataMapper/QtTF_2D_Trapezoidal_GF.h"
+//DockWidget
+#include "CrystalGUI/DataPresent/DataPresentDockWidget.hpp"
 
 #include <QFile>
 
@@ -39,8 +36,8 @@ namespace CrystalGUI{
 InitialMainWindow::InitialMainWindow(QWidget* parent)
     : QMainWindow(parent) {
 
-    if (MainWindowDebug) {
-        PrintValue_Std("InitialMainWindow::InitialMainWindow(...)");
+    if (MainWindowDebug && !CloseAllDebugInfo) {
+        Print_Gui_Info("Create InitialMainWindow Object");
     }
 
     // Appearance
@@ -55,24 +52,25 @@ InitialMainWindow::InitialMainWindow(QWidget* parent)
 
     setFixedSize(500, 483);
 
-    setMenuBar(&menuBar);
-
     setupMenu();
 
-    addToolBar(Qt::TopToolBarArea, &mainToolBar);
-
     setupTool();
+
+    setupWidget();
+
+    setupDock();
 
     isDisplayMainWindowExist = false;
 }
 
 InitialMainWindow::~InitialMainWindow() {
-    if (MainWindowDebug)
-        PrintValue_Std("InitialMainWindow::~InitialMainWindow()");
+    if (MainWindowDebug && !CloseAllDebugInfo) {
+        Print_Gui_Info("Destroy InitialMainWindow Object");
+    }
 
     if (m_DisplayMainWindow && isDisplayMainWindowExist) {
         // Disconnect signals and slots
-        disconnect(&RunExampleAction, SIGNAL(triggered()), this, SLOT(RunExample()));
+        disconnect(RunExampleAction, SIGNAL(triggered()), this, SLOT(RunExample()));
 
         // delete DisplayMainWindow
         m_DisplayMainWindow->~DisplayMainWindow();
@@ -87,27 +85,37 @@ InitialMainWindow::~InitialMainWindow() {
 
 
 void InitialMainWindow::setupMenu() {
-    OpenSceneAction.setIcon(QIcon("Resources/Icons/OpenScene.png"));
-    OpenSceneAction.setText(tr("Open Scene"));
 
-    RunExampleAction.setIcon(QIcon("Resources/Icons/RunExample.png"));
-    RunExampleAction.setText(tr("Run Example"));
+    menuBar = new QMenuBar;
+    setMenuBar(menuBar);
 
-    connect(&RunExampleAction, SIGNAL(triggered()), this, SLOT(RunExample()));
+    OpenSceneAction = new QAction;
+    OpenSceneAction->setIcon(QIcon("Resources/Icons/OpenScene.png"));
+    OpenSceneAction->setText(tr("Open Scene"));
 
-    menuBar.addMenu(&fileMenu);
-    fileMenu.setTitle("File");
+    RunExampleAction = new QAction;
+    RunExampleAction->setIcon(QIcon("Resources/Icons/RunExample.png"));
+    RunExampleAction->setText(tr("Run Example"));
 
-    fileMenu.addAction(&OpenSceneAction);
-    fileMenu.addSeparator();
-    fileMenu.addAction(&RunExampleAction);
+    connect(RunExampleAction, SIGNAL(triggered()), this, SLOT(RunExample()));
+
+    fileMenu = new QMenu;
+    menuBar->addMenu(fileMenu);
+    fileMenu->setTitle("File");
+
+    fileMenu->addAction(OpenSceneAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(RunExampleAction);
 }
 
 void InitialMainWindow::setupTool() {
-    mainToolBar.addAction(&OpenSceneAction);
-    mainToolBar.addSeparator();
-    mainToolBar.addAction(&RunExampleAction);
-    mainToolBar.addSeparator();
+    mainToolBar = new QToolBar(this);
+    addToolBar(Qt::TopToolBarArea, mainToolBar);
+
+    mainToolBar->addAction(OpenSceneAction);
+    mainToolBar->addSeparator();
+    mainToolBar->addAction(RunExampleAction);
+    mainToolBar->addSeparator();
 }
 
 
@@ -138,12 +146,27 @@ void InitialMainWindow::DisplayMainWindowClosed() {
     isDisplayMainWindowExist = false;
 }
 
+void InitialMainWindow::setupWidget(void) {
+
+}
+
+void InitialMainWindow::setupDock(void) {
+    m_DataPresentDockWidget = new DataPresentDockWidget;
+    addDockWidget(Qt::LeftDockWidgetArea, m_DataPresentDockWidget);
+    showMemoryInfo();
+}
+
 
 
 DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
+
+    if (MainWindowDebug && !CloseAllDebugInfo) {
+        Print_Gui_Info("Create DisplayMainWindow Object");
+    }
+
     setMinimumSize(350, 200);
 
-    m_QtRenderThread = NULL;
+    //m_QtRenderThread = NULL;
 
     setWindowIcon(QIcon("Resources/Icons/sIcon.png"));
     QFile qssfile("Resources/qss/DisplayMainWindow.qss");
@@ -158,48 +181,43 @@ DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
     centralWidget->setLayout(mainLayout);
 
     // parse XML File
-    sp.setFilePath(sceneFile);
-    sp.readSceneXML();
+    //sp.setFilePath(sceneFile);
+    //sp.readSceneXML();
 
     // Initialize TransferFunction DockWidget
-    setQtTsFuncDock(sp);
+    //setQtTsFuncDock(sp);
 
     // Initialize QtVisualizer
-    m_QtVisualizer = new QtVisualizer;
-    m_QtVisualizer->Initialization(sp.m_ScenePreset.m_VisualizerPreset);
+    //m_QtVisualizer = new QtVisualizer;
+    //m_QtVisualizer->Initialization(sp.m_ScenePreset.m_VisualizerPreset);
 
-    // Initialize DisplayWidget
-    displayWidget = new DisplayWidget;
-    // thread return 0x1, maybe not a mistake
-    mainLayout->addWidget(displayWidget);
-    displayWidget->setFrameBuffer(m_QtVisualizer->m_FrameBuffer);
-    displayWidget->initializeBuffer();
+    setupWidget();
 
+    setupDock();
 
     // start rendering thread
-    m_QtRenderThread = new QtRenderThread();
-    m_QtRenderThread->setVisualizer(m_QtVisualizer->m_Visualizer);
-    m_QtRenderThread->setFrameBuffer(m_QtVisualizer->m_FrameBuffer);
+    //m_QtRenderThread = new QtRenderThread();
+    //m_QtRenderThread->setVisualizer(m_QtVisualizer->m_Visualizer);
+    //m_QtRenderThread->setFrameBuffer(m_QtVisualizer->m_FrameBuffer);
 
-    m_QtRenderThread->renderBegin();
-    m_QtRenderThread->start();
-    connect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
+    //m_QtRenderThread->renderBegin();
+    //m_QtRenderThread->start();
+   // connect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
 
     // Test
-    CrystalAlgrithm::printCudaDevice();
-    CrystalAlgrithm::SpectrumTest();
-
-
+    // CrystalAlgrithm::printCudaDevice();
+    // CrystalAlgrithm::SpectrumTest();
 
 }
 
 
 DisplayMainWindow::~DisplayMainWindow() {
-    if (MainWindowDebug)
-        PrintValue_Std("DisplayMainWindow::~DisplayMainWindow()");
+    if (MainWindowDebug && !CloseAllDebugInfo) {
+        Print_Gui_Info("Destroy DisplayMainWindow Object");
+    }  
 
-    disconnect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
-
+    //disconnect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
+    /*
     if (m_QtRenderThread) {
         m_QtRenderThread->setStopFlag(true);
 
@@ -210,11 +228,11 @@ DisplayMainWindow::~DisplayMainWindow() {
 
         delete m_QtRenderThread;
         m_QtRenderThread = NULL;
-    }
+    }*/
 
-    if (m_QtVisualizer) {
-        delete m_QtVisualizer;
-    }
+    //if (m_QtVisualizer) {
+    //    delete m_QtVisualizer;
+    //}
 
 }
 
@@ -229,36 +247,23 @@ void DisplayMainWindow::closeEvent(QCloseEvent* e) {
     else {
         e->ignore();
     }
+    showMemoryInfo();
 }
 
-
-
-void DisplayMainWindow::setQtTsFuncDock(ParserScene& sp) {
-
-    if ("TF_1D_Trapezoidal" == sp.getTsFuncType()) {
-        m_QtTsFuncDock = new QtTF_1D_Trapezoidal();
-    }
-    else if ("TF_2D_Trapezoidal_GF" == sp.getTsFuncType()) {
-        m_QtTsFuncDock = new QtTF_2D_Trapezoidal_GF();
-    }
-    else {
-        PrintError("No matching transfer function name");
-        return;
-    }
-    m_QtTsFuncDock->setTsFuncDirPath(sp.getFileDir().toStdString());
-    m_QtTsFuncDock->Initialize(
-        sp.m_ScenePreset.m_DataMapperPreset,
-        sp.m_ScenePreset.m_VisualizerPreset);
-
-    addDockWidget(Qt::LeftDockWidgetArea, m_QtTsFuncDock);
-
-    //tabifyDockWidget(mytfDockWidget, myLightSetDockWidget);
-    m_QtTsFuncDock->raise();
+void DisplayMainWindow::setupMenu(void) {
 
 }
 
+void DisplayMainWindow::setupWidget(void) {
+    // Initialize DisplayWidget
+    m_DisplayWidget = new DisplayWidget;
+    // thread return 0x1, maybe not a mistake
+    mainLayout->addWidget(m_DisplayWidget);
+}
 
-
+void DisplayMainWindow::setupDock(void) {
+    
+}
 
 
 

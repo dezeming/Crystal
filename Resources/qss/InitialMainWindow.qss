@@ -1,5 +1,5 @@
 QMainWindow{
-	background:url(Resources/Icons/Crystal-2.png); 
+	background:url(Resources/Icons/Crystal-Initial.png); 
 	border-left: 3px solid gray;
 	border-top: 3px solid gray;
 	border-bottom: 3px solid gray;

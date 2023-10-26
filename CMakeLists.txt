@@ -29,6 +29,10 @@ project(Crystal VERSION 1.0.1)
 ################### Third party integration library ####################
 ########################################################################
 
+########## OpenGL ##########
+
+find_package(OpenGL REQUIRED)
+
 ########## Qt Lib ##########
 
 set(CMAKE_CXX_STANDARD 11)
@@ -42,6 +46,7 @@ find_package(Qt6 COMPONENTS
 	Gui
 	Core
 	Xml
+	OpenGL
 	OpenGLWidgets
 REQUIRED)
 
@@ -57,6 +62,7 @@ SET(QT6_LIBS
 	Qt6::Gui
 	Qt6::Core
 	Qt6::Xml
+	Qt6::OpenGL
 	Qt6::OpenGLWidgets
 )
 
@@ -99,38 +105,29 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Build into static libraries
 set (BUILD_SHARED_LIBS OFF)
 
-if (MSVC)
-  add_definitions(_CRT_SECURE_NO_WARNINGS)
-endif ()
-
 # stb
 
 set (STB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/stb)
 
 ###########################################################################
 # zlib
-
-set(zlib_dir ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib/)
-
+#set(zlib_dir ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib/)
 # Build zlib
-set (ZLIB_BUILD_STATIC_LIBS ON CACHE BOOL " " FORCE)
-set (ZLIB_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
-add_subdirectory (${zlib_dir})
-
-set (ZLIB_LIBRARIES zlibstatic)
-set (ZLIB_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
-set_property (TARGET zlibstatic PROPERTY FOLDER "CrystalThirdParty")
-set_target_properties(zlibstatic PROPERTIES FOLDER "CrystalThirdParty")
-
+#set (ZLIB_BUILD_STATIC_LIBS ON CACHE BOOL " " FORCE)
+#set (ZLIB_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
+#add_subdirectory (${zlib_dir})
+#set (ZLIB_LIBRARIES zlibstatic)
+#set (ZLIB_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+#set_property (TARGET zlibstatic PROPERTY FOLDER "CrystalThirdParty")
+#set_target_properties(zlibstatic PROPERTIES FOLDER "CrystalThirdParty")
 # try to make openexr happy about this...
-set (ZLIB_LIBRARY zlibstatic)
-set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
-set (ZLIB_FOUND TRUE)
-add_library (ZLIB::ZLIB ALIAS zlibstatic)
-include_directories(${ZLIB_INCLUDE_DIRS}) 
-set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
-set (ZLIB_LIBRARIES ${ZLIB_LIBARIES})
-
+#set (ZLIB_LIBRARY zlibstatic)
+#set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CrystalThirdParty/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+#set (ZLIB_FOUND TRUE)
+#add_library (ZLIB::ZLIB ALIAS zlibstatic)
+#include_directories(${ZLIB_INCLUDE_DIRS}) 
+#set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+#set (ZLIB_LIBRARIES ${ZLIB_LIBARIES})
 
 ###########################################################################
 # OpenEXR
@@ -213,7 +210,7 @@ endif()
 # Utility
 set(Utility
 	CrystalAlgrithm/Utility/cpu_Common.hpp
-	CrystalAlgrithm/Utility/cpu_Common.hpp
+	CrystalAlgrithm/Utility/cpu_Common.cpp
 	CrystalAlgrithm/Utility/cuda_common.cuh
 	CrystalAlgrithm/Utility/cuda_common.cu
 	CrystalAlgrithm/Utility/timerRandom.hpp
@@ -231,12 +228,10 @@ cuda_add_library(CrystalAlgrithm STATIC
 #cuda_add_library(CrystalAlgrithm SHARED ${Utility} )
 
 SET(CrystalAlgrithm_LIBRARY_debug 
-	${ZLIB_LIBRARIES}
 	${OPENEXR_LIBS}
 )
 
 SET(CrystalAlgrithm_LIBRARY_release 
-	${ZLIB_LIBRARIES}
 	${OPENEXR_LIBS}
 )
 
@@ -266,13 +261,13 @@ set(Main
 # Make the Main group
 SOURCE_GROUP("Main" FILES ${Main})
 
-# Dispaly
-set(Dispaly
-	CrystalGUI/Dispaly/DisplayWidget.hpp
-	CrystalGUI/Dispaly/DisplayWidget.cpp
+# Display
+set(Display
+	CrystalGUI/Display/DisplayWidget.hpp
+	CrystalGUI/Display/DisplayWidget.cpp
 )
-# Make the Dispaly group
-SOURCE_GROUP("Dispaly" FILES ${Dispaly})
+# Make the Display group
+SOURCE_GROUP("Display" FILES ${Display})
 
 # Utility
 set(Utility
@@ -285,6 +280,16 @@ set(Utility
 # Make the Utility group
 SOURCE_GROUP("Utility" FILES ${Utility})
 
+# DataPresent
+set(DataPresent
+	CrystalGUI/DataPresent/DataPresentDockWidget.hpp
+	CrystalGUI/DataPresent/DataPresentDockWidget.cpp
+	CrystalGUI/DataPresent/MemoryRecord.cpp
+	CrystalGUI/DataPresent/DataTreeWidget.hpp
+	CrystalGUI/DataPresent/DataTreeWidget.cpp
+)
+# Make the DataPresent group
+SOURCE_GROUP("DataPresent" FILES ${DataPresent})
 
 # Create executable
 add_executable(CrystalGUI
@@ -292,6 +297,7 @@ add_executable(CrystalGUI
 	${Main}
 	${Display}
 	${Utility}
+	${DataPresent}
 )
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
@@ -299,6 +305,8 @@ SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
 SET(LIBRARY_debug 
 	# Qt Lib
 	${QT6_LIBS}
+	# OpenGL
+	OpenGL::GL
 	# Crystal Algrithm Lib
 	${publish_debug}/*.lib
 )
@@ -306,6 +314,8 @@ SET(LIBRARY_debug
 SET(LIBRARY_release 
 	# Qt Lib
 	${QT6_LIBS}
+	# OpenGL
+	OpenGL::GL
 	# Crystal Algrithm Lib
 	${publish_release}/*.lib
 )
@@ -331,6 +341,57 @@ file(COPY ${Resources} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Resources/)
 
 file(GLOB Examples "${CMAKE_CURRENT_SOURCE_DIR}/Examples/*")
 file(COPY ${Examples} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Examples/)
+
+################################################################
+### Qt ###
+file(GLOB QT_BINS_Release
+	${Qt_DIR}/bin/Qt6Widgets.dll
+	${Qt_DIR}/bin/Qt6Gui.dll
+	${Qt_DIR}/bin/Qt6Core.dll
+	${Qt_DIR}/bin/Qt6Xml.dll
+	${Qt_DIR}/bin/Qt6OpenGL.dll
+	${Qt_DIR}/bin/Qt6OpenGLWidgets.dll
+)
+file(GLOB QT_BINS_Debug
+	${Qt_DIR}/bin/Qt6Widgetsd.dll
+	${Qt_DIR}/bin/Qt6Guid.dll
+	${Qt_DIR}/bin/Qt6Cored.dll
+	${Qt_DIR}/bin/Qt6Xmld.dll
+	${Qt_DIR}/bin/Qt6OpenGLd.dll
+	${Qt_DIR}/bin/Qt6OpenGLWidgetsd.dll
+)
+file(COPY ${QT_BINS_Debug} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug/)
+file(COPY ${QT_BINS_Release} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release/)
+
+file(GLOB QT_Dependencies_icon
+	"${Qt_DIR}/plugins/iconengines/*.dll"
+	)
+file(GLOB QT_Dependencies_imageformats
+	${Qt_DIR}/plugins/imageformats/*.dll
+	)
+file(GLOB QT_Dependencies_platforms
+	${Qt_DIR}/plugins/platforms/*.dll
+	)
+file(GLOB QT_Dependencies_styles
+	${Qt_DIR}/plugins/styles/*.dll
+	)
+file(GLOB QT_Dependencies_translations
+	${Qt_DIR}/translations/*
+	)
+
+file(COPY ${QT_Dependencies_icon} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug/iconengines/)
+file(COPY ${QT_Dependencies_imageformats} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug/imageformats/)
+file(COPY ${QT_Dependencies_platforms} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug/platforms/)
+file(COPY ${QT_Dependencies_styles} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug/styles/)
+file(COPY ${QT_Dependencies_translations} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug/translations/)
+
+file(COPY ${QT_Dependencies_icon} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release/iconengines/)
+file(COPY ${QT_Dependencies_imageformats} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release/imageformats/)
+file(COPY ${QT_Dependencies_platforms} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release/platforms/)
+file(COPY ${QT_Dependencies_styles} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release/styles/)
+file(COPY ${QT_Dependencies_translations} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release/translations/)
+
+
 
 
 

@@ -17,31 +17,47 @@
     Github site: <https://github.com/dezeming/Crystal>
 */
 
-#include "Status.hpp"
+#ifndef __DisplayWidget_h__
+#define __DisplayWidget_h__
+
+#include "CrystalGUI/Utility/Common.hpp"
+
+#include <QImage>
+#include <QObject>
+#include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
+#include <QOpenGLWidget>
 
 namespace CrystalGUI {
 
-    GuiStatus m_GuiStatus;
+class DisplayWidget : public QOpenGLWidget {
+    Q_OBJECT
+public:
+    explicit DisplayWidget(QWidget* parent = 0);
+    ~DisplayWidget();
+
+    void setImageData(uchar* imageSrc, uint width, uint height);
+
+protected:
+    void initializeGL() Q_DECL_OVERRIDE;
+    void resizeGL(int w, int h) Q_DECL_OVERRIDE;
+    void paintGL() Q_DECL_OVERRIDE;
+
+
+    QImage qm;
+
+private:
+    GLuint textureID;
+
+};
+
+
 
 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif
 
 

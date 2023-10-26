@@ -14,13 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    Github site: <https://github.com/feimos32/Crystal>
+    Github site: <https://github.com/dezeming/Crystal>
 */
 
 #ifndef __MainWindow_h__
 #define __MainWindow_h__
 
-#include "CrystalGUI/Utility/Common.h"
+#include "CrystalGUI/Utility/Common.hpp"
 
 #include <QtWidgets>
 
@@ -30,15 +30,11 @@
 
 #include <QHBoxLayout>
 
-#include "CrystalGUI/Display/DisplayWidget.h"
-#include "CrystalGUI/QtDataMapper/QtTsFuncDock.h"
-#include "CrystalGUI/QtVisualizer/QtVisualizer.h"
-#include "CrystalGUI/QtVisualizer/QtRenderThread.h"
-#include "CrystalGUI/QtVisInteractor/QtVisInteractor.h"
-
-#include "CrystalGUI/QtReader/ParserScene.h"
 
 namespace CrystalGUI{
+
+    class DisplayWidget;
+    class DataPresentDockWidget;
 
 class DisplayMainWindow : public QMainWindow
 {
@@ -49,29 +45,25 @@ public:
     DisplayMainWindow(QString sceneFile, QWidget* parent = 0);
     ~DisplayMainWindow();
 
-    void setQtTsFuncDock(ParserScene& sp);
+    //void setQtTsFuncDock(ParserScene& sp);
 
 signals:
     void windowClosed();
 
 protected:
 
+    DisplayWidget* m_DisplayWidget;
+
     QHBoxLayout * mainLayout;
-
-    DisplayWidget * displayWidget;
-
-    QtTsFuncDock* m_QtTsFuncDock;
 
     QWidget* centralWidget;
 
     void closeEvent(QCloseEvent* e);
 
-    ParserScene sp;
-
-    QtVisualizer* m_QtVisualizer;
-    QtRenderThread* m_QtRenderThread;
-
-
+private:
+    void setupMenu(void);
+    void setupWidget(void);
+    void setupDock(void);
 
 };
 
@@ -84,24 +76,31 @@ public:
     ~InitialMainWindow();
 
 protected:
-    QToolBar mainToolBar;
+    QToolBar* mainToolBar;
 
-    QMenuBar menuBar;
-    QMenu fileMenu;
+    QMenuBar* menuBar;
+    QMenu* fileMenu;
 
-    QAction OpenSceneAction;
-    QAction RunExampleAction;
+    QAction* OpenSceneAction;
+    QAction* RunExampleAction;
 
+    // Widgets
     DisplayMainWindow* m_DisplayMainWindow;
+
+    // Dock Widgets
+    DataPresentDockWidget* m_DataPresentDockWidget;
 
     bool isDisplayMainWindowExist;
 
+private:
+    void setupWidget(void);
+    void setupDock(void);
     void setupMenu();
     void setupTool();
 
     void closeEvent(QCloseEvent* e);
 private:
-    QWidget centralWidget;
+    QWidget* centralWidget;
 
 
 private slots:
