@@ -33,11 +33,12 @@
 
 #include <QHBoxLayout>
 
+#include "CrystalGUI/ReaderAndWriter/ParserScene.hpp"
 
 namespace CrystalGUI{
 
-    class DisplayWidget;
-    class DataPresentDockWidget;
+class DisplayWidget;
+class DataMapperDockWidget;
 
 class DisplayMainWindow : public QMainWindow
 {
@@ -48,20 +49,21 @@ public:
     DisplayMainWindow(QString sceneFile, QWidget* parent = 0);
     ~DisplayMainWindow();
 
-    //void setQtTsFuncDock(ParserScene& sp);
-
 signals:
     void windowClosed();
 
 protected:
+    QHBoxLayout * mainLayout;
+    QWidget* centralWidget;
 
     DisplayWidget* m_DisplayWidget;
 
-    QHBoxLayout * mainLayout;
-
-    QWidget* centralWidget;
+    // Docks
+    DataMapperDockWidget* m_DataMapperDockWidget;
 
     void closeEvent(QCloseEvent* e);
+
+    ParserScene parser;
 
 private:
     void setupMenu(void);
@@ -69,6 +71,9 @@ private:
     void setupDock(void);
 
 };
+
+
+class DataPresentDockWidget;
 
 class InitialMainWindow : public QMainWindow
 {

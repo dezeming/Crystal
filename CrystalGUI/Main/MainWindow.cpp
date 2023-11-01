@@ -26,7 +26,8 @@
 #include "CrystalGUI/Display/DisplayWidget.hpp"
 
 //DockWidget
-#include "CrystalGUI/DataPresent/DataPresentDockWidget.hpp"
+#include "CrystalGUI/InfoPresent/DataPresentDockWidget.hpp"
+#include "CrystalGUI/DataMapper/DataMapperDockWidget.hpp"
 
 #include <QFile>
 
@@ -185,8 +186,8 @@ DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
     centralWidget->setLayout(mainLayout);
 
     // parse XML File
-    //sp.setFilePath(sceneFile);
-    //sp.readSceneXML();
+    parser.setFilePath(sceneFile);
+    parser.readSceneXML();
 
     // Initialize TransferFunction DockWidget
     //setQtTsFuncDock(sp);
@@ -266,7 +267,12 @@ void DisplayMainWindow::setupWidget(void) {
 }
 
 void DisplayMainWindow::setupDock(void) {
-    
+    m_DataMapperDockWidget = new DataMapperDockWidget;
+    addDockWidget(Qt::LeftDockWidgetArea, m_DataMapperDockWidget);
+
+    //tabifyDockWidget(m_DataMapperDockWidget, m_LightSetDockWidget);
+    m_DataMapperDockWidget->raise();
+
 }
 
 

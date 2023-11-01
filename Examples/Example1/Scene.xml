@@ -1,0 +1,16 @@
+<Scene>
+	<Camera> 
+		<CameraType type="perspective" />
+		<Fov value="45.0" />
+		<LookAt from="0,0,5" to="0,0,-1" />
+	</Camera>
+	<Film> 
+		<FrameBufferSize width="708" height="608" />
+	</Film>
+	<Visualizer> 
+		<Visualizer type="kroesSSVisualizer" />
+	</Visualizer>
+	<SceneGeometry> 
+		<SceneGeometryFile file="SceneGeometry.xml" />
+	</SceneGeometry>
+</Scene>

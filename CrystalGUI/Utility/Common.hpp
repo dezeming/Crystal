@@ -25,10 +25,18 @@ Github site: <https://github.com/dezeming/Crystal>
 
 #include <iostream>
 #include <string>
+#include <QString>
 
 namespace CrystalGUI {
 
 #define CloseAllDebugInfo false
+
+/*
+#include <Windows.h>
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+*/
 
 #define COUT_RED(STRING) std::cout<<"\033[1;31m"<<STRING<<"\033[0m"
 #define COUT_GREEN(STRING) std::cout<<"\033[1;32m"<<STRING<<"\033[m"
@@ -49,9 +57,29 @@ inline void getGuiInfo(std::string info, const char* file, int line) {
 	COUT_GREEN("Info: [" + std::string(info) + "]") << " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
 }
 
+
 #define Print_Gui_Warning( warning ) (getGuiWarning( warning, __FILE__, __LINE__ ))
 #define Print_Gui_Error( err ) (getGuiError( err, __FILE__, __LINE__ ))
 #define Print_Gui_Info( info ) (getGuiInfo( info, __FILE__, __LINE__ ))
+
+inline void getDataInfo(std::string info, const char* file, int line) {
+	COUT_YELLOW("[" + std::string(info) + "]") << " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+inline void getDataInfo(std::string info, std::string data, const char* file, int line) {
+	COUT_YELLOW("[" + std::string(info) + ": " + data + "]") << " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+inline void getDataInfo(std::string info, int data, const char* file, int line) {
+	COUT_YELLOW("[" + std::string(info) + ": " + std::to_string(data) + "]") << " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+inline void getDataInfo(std::string info, float data, const char* file, int line) {
+	COUT_YELLOW("[" + std::string(info) + ": " + std::to_string(data) + "]") << " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+inline void getDataInfo(std::string info, QString data, const char* file, int line) {
+	COUT_YELLOW("[" + std::string(info) + ": " + (data.toStdString()) + "]") << " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
+}
+
+#define Print_String( info, data ) (getDataInfo( info,  __FILE__, __LINE__ ))
+#define Print_Data_Info( info, data ) (getDataInfo( info, data,  __FILE__, __LINE__ ))
 
 
 void showMemoryInfo(void);
@@ -61,6 +89,9 @@ void showCudaDevicesInfo(void);
 
 
 }
+
+
+
 
 
 

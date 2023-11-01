@@ -220,10 +220,21 @@ set(Utility
 # Make the Utility group
 SOURCE_GROUP("Utility" FILES ${Utility})
 
+# Scene
+set(Scene
+	CrystalAlgrithm/Scene/Scene.h
+	CrystalAlgrithm/Scene/Scene.cpp
+	CrystalAlgrithm/Scene/ScenePreset.h
+	CrystalAlgrithm/Scene/ScenePreset.cpp
+)
+# Make the Scene group
+SOURCE_GROUP("Scene" FILES ${Scene})
+
 #set(CMAKE_BUILD_TYPE "debug")
 
 cuda_add_library(CrystalAlgrithm STATIC 
 	${Utility}
+	${Scene}
 )
 # Do not generate dynamic link libraries
 #cuda_add_library(CrystalAlgrithm SHARED ${Utility} )
@@ -281,24 +292,54 @@ set(Utility
 # Make the Utility group
 SOURCE_GROUP("Utility" FILES ${Utility})
 
-# DataPresent
-set(DataPresent
-	CrystalGUI/DataPresent/DataPresentDockWidget.hpp
-	CrystalGUI/DataPresent/DataPresentDockWidget.cpp
-	CrystalGUI/DataPresent/MemoryRecord.cpp
-	CrystalGUI/DataPresent/DevicesRecord.cpp
-	CrystalGUI/DataPresent/DataTreeWidget.hpp
-	CrystalGUI/DataPresent/DataTreeWidget.cpp
+# InfoPresent
+set(InfoPresent
+	CrystalGUI/InfoPresent/DataPresentDockWidget.hpp
+	CrystalGUI/InfoPresent/DataPresentDockWidget.cpp
+	CrystalGUI/InfoPresent/MemoryRecord.cpp
+	CrystalGUI/InfoPresent/DevicesRecord.cpp
+	CrystalGUI/InfoPresent/DataTreeWidget.hpp
+	CrystalGUI/InfoPresent/DataTreeWidget.cpp
 )
-# Make the DataPresent group
-SOURCE_GROUP("DataPresent" FILES ${DataPresent})
+# Make the InfoPresent group
+SOURCE_GROUP("InfoPresent" FILES ${InfoPresent})
+
+# ReaderAndWriter
+set(ReaderAndWriter
+	CrystalGUI/ReaderAndWriter/ParserScene.hpp
+	CrystalGUI/ReaderAndWriter/ParserScene.cpp
+	CrystalGUI/ReaderAndWriter/ParserGeometry.hpp
+	CrystalGUI/ReaderAndWriter/ParserGeometry.cpp
+	CrystalGUI/ReaderAndWriter/ParserDataMapper.hpp
+	CrystalGUI/ReaderAndWriter/ParserDataMapper.cpp
+)
+# Make the ReaderAndWriter group
+SOURCE_GROUP("ReaderAndWriter" FILES ${ReaderAndWriter})
+
+# DataMapper
+set(DataMapper
+	# DataMapper
+	CrystalGUI/DataMapper/DataMapperStatistics.hpp
+	CrystalGUI/DataMapper/DataMapperStatistics.cpp
+	CrystalGUI/DataMapper/DataMapperDockWidget.hpp
+	CrystalGUI/DataMapper/DataMapperDockWidget.cpp
+	# Scalar Transfer function
+	CrystalGUI/DataMapper/ScalarTransferFuncNodePropertiesWidget.hpp
+	CrystalGUI/DataMapper/ScalarTransferFuncNodePropertiesWidget.cpp
+	CrystalGUI/DataMapper/ScalarTransferFuncGraphicsView.hpp
+	CrystalGUI/DataMapper/ScalarTransferFuncGraphicsView.cpp
+)
+# Make the DataMapper group
+SOURCE_GROUP("DataMapper" FILES ${DataMapper})
 
 # Create executable
 add_executable(CrystalGUI WIN32
 	${Main}
 	${Display}
 	${Utility}
-	${DataPresent}
+	${InfoPresent}
+	${DataMapper}
+	${ReaderAndWriter}
 )
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})

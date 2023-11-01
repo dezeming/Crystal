@@ -93,7 +93,30 @@ If the project has already been cloned, but there are no clone sub modules, ente
 
 > Provide real-time denoising capabilities for realistic rendering, with the intention of achieving high-quality rendering results in interaction.
 
+# Design description
 
+## Parser XML file
+
+Scene file includes 4 components: Camera, Film, Visualizer, SceneGeometry. The scene file is used to intialize classes in ScenePreset.h.
+
+Scene.xml
+> - Basic: CameraPreset, FilmPreset, VisualizerPreset
+
+DataMapper.xml
+> - DataMapper: STF_Preset
+
+SceneGeometry.xml
+> - Medical: MedicalVolumeDataPreset, MedicalMeshDataPreset
+> - OtherGemoetry: EnvironmentMeshPreset
+> - Light: PointLightPreset, QuadAreaLightPreset, HdrEnvironmentLightPreset
+> - PointLightPreset
+
+
+## Data Mapper
+
+Our renderer supports rendering both surface model and volume simultaneously.
+
+DataMapper is designed to map the voxel value into material properties. The current design of DataMapper will support two modes: one is to map scalar data, which is the scalar transfer function; Another method of mapping vector data, such as the volume formed by stacking RGB images, is the vector transfer function. DataMapper is only associated with volumes in the scene and is not related to other geometries (such as meshes).
 
 
 
