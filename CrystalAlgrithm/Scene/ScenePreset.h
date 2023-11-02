@@ -21,45 +21,39 @@
 #ifndef __PresetScene_h__
 #define __PresetScene_h__
 
+#include "CrystalAlgrithm/Utility/Geometry.h"
+#include "CrystalAlgrithm/Utility/Spectrum.h"
+#include "CrystalAlgrithm/Utility/Transform.h" 
+
 #include <string>
 #include <iostream>
 #include <vector>
 
 namespace CrystalAlgrithm{
 
-class MedicalVolumeDataPreset;
-class STF_Preset;
-
-class PointLightPreset;
-class QuadAreaLightPreset;
-
-
-
-class SceneGeometryPreset {
-public:
-	SceneGeometryPreset() {
-		SceneGeometryFile = "";
-	}
-
-	std::string SceneGeometryFile;
-
-	std::string ToString() {
-		return "SceneGeometryPreset: "
-			"  SceneGeometryFile:[" + SceneGeometryFile + "]";
-	}
-};
+/****** Basic ******/ 
 
 class CameraPreset {
 public:
 	CameraPreset() {
-		CameraType = "";
+		reset();
+	}
+	void reset() {
+		CameraType = "perspective";
 		fov = 45.0f;
 		lookatFrom[0] = 0.0f; lookatFrom[1] = 0.0f; lookatFrom[2] = 5.0f;
-		lookatTo[0] = 0.0f; lookatTo[1] = 0.0f; lookatTo[2] = -1.0f;
+		lookatTo[0] = 0.0f; lookatTo[1] = 0.0f; lookatTo[2] = 0.0f;
 	}
 	std::string CameraType;
 	float fov;
-	float lookatFrom[3], lookatTo[3];
+	Point3f lookatFrom, lookatTo;
+
+	bool isValid() {
+		if (fov < 5.0f || fov > 170.f) return false;
+		// Currently only supports perspective projection cameras
+		if (CameraType != "perspective") return false;
+		return true;
+	}
 
 	std::string ToString() {
 		return "CameraPreset: "
@@ -73,10 +67,22 @@ public:
 class FilmPreset {
 public:
 	FilmPreset() {
-		width = 0;
-		height = 0;
+		width = 1024;
+		height = 768;
 	}
-	int width, height;
+	void reset() {
+		width = 1024;
+		height = 768;
+	}
+	size_t width, height;
+
+	bool isValid() {
+		// Currently, only resolutions up to 4000 * 4000 are supported.
+		if (width > 4000 || height > 4000) {
+			return false;
+		}
+		return true;
+	}
 
 	std::string ToString() {
 		return "FilmPreset: "
@@ -88,9 +94,19 @@ public:
 class VisualizerPreset {
 public:
 	VisualizerPreset() {
+		reset();
+	}
+	void reset() {
 		VisualizerType = "";
 	}
 	std::string VisualizerType;
+
+	bool isValid() {
+		if (VisualizerType != "kroesSSVisualizer") {
+			return false;
+		}
+		return true;
+	}
 
 	std::string ToString() {
 		return "VisualizerPreset: " 
@@ -98,8 +114,22 @@ public:
 	}
 };
 
+/****** Geometry ******/
+
+// Volume & Mesh
+
 class MedicalVolumeDataPreset {
 public:
+	MedicalVolumeDataPreset() {
+		reset();
+	}
+
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
 	std::string ToString() {
 
 		return "";
@@ -108,16 +138,54 @@ public:
 
 class MedicalMeshDataPreset {
 public:
+	MedicalMeshDataPreset() {
+		reset();
+	}
 
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
+	std::string ToString() {
+
+		return "";
+	}
 };
 
 class EnvironmentMeshPreset {
 public:
+	EnvironmentMeshPreset() {
+		reset();
+	}
 
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
+	std::string ToString() {
+
+		return "";
+	}
 };
+
+// Light
 
 class PointLightPreset {
 public:
+	PointLightPreset() {
+		reset();
+	}
+
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
 	std::string ToString() {
 
 		return "";
@@ -126,6 +194,16 @@ public:
 
 class QuadAreaLightPreset {
 public:
+	QuadAreaLightPreset() {
+		reset();
+	}
+
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
 	std::string ToString() {
 
 		return "";
@@ -134,57 +212,201 @@ public:
 
 class HdrEnvironmentLightPreset {
 public:
+	HdrEnvironmentLightPreset() {
+		reset();
+	}
+
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
+
 	std::string ToString() {
 
 		return "";
 	}
 };
+
+/****** Data Mapper ******/ 
 
 // Scalar Transfer Function
 class STF_Preset {
 public:
 	STF_Preset() {
+		reset();
+	}
 
+	void reset() {
+		hasDensityScale = false;
+		hasOpacity = hasDiffuse = hasSpecular = hasRoughness = hasMetallic = false;
+		hasEmission = hasAbsorption = hasScattering = hasHG_Phase = false;
+
+		type = "";
+
+		NormalizedIntensity.clear();
+		NormalizedIntensity.shrink_to_fit();
+		DensityScale.clear();
+		DensityScale.shrink_to_fit();
+		Opacity.clear();
+		Opacity.shrink_to_fit();
+		HG_Phase.clear();
+		HG_Phase.shrink_to_fit();
+		Emission.clear();
+		Emission.shrink_to_fit();
+		Absorption.clear();
+		Absorption.shrink_to_fit();
+		Scattering.clear();
+		Scattering.shrink_to_fit();
+		Diffuse.clear();
+		Diffuse.shrink_to_fit();
+		Specular.clear();
+		Specular.shrink_to_fit();
+		Roughness.clear();
+		Roughness.shrink_to_fit();
+		Metallic.clear();
+		Metallic.shrink_to_fit();
+	}
+
+	// global properties
+
+	// local properties
+
+	bool hasDensityScale;
+	bool hasOpacity, hasDiffuse, hasSpecular, hasRoughness, hasMetallic;
+	bool hasEmission, hasAbsorption, hasScattering, hasHG_Phase;
+
+	std::string type;
+
+	std::vector<float> NormalizedIntensity;
+	std::vector<float> DensityScale;
+	std::vector<float> Opacity;
+	std::vector<float> HG_Phase;
+	std::vector<Spectrum3> Emission;
+	std::vector<Spectrum3> Absorption;
+	std::vector<Spectrum3> Scattering;
+	std::vector<Spectrum3> Diffuse;
+	std::vector<Spectrum3> Specular;
+	std::vector<float> Roughness;
+	std::vector<Spectrum3> Metallic;
+
+	bool isValid(const VisualizerPreset& vp) {
+		if (vp.VisualizerType == "kroesSSVisualizer") {
+			if (!hasOpacity) return false;
+			if (!hasDiffuse) return false;
+			if (!hasSpecular) return false;
+			if (!hasRoughness) return false;
+			if (!hasDensityScale) return false;
+		}
+		if (!isValid()) return false;
+		return true;
+	}
+
+	bool isValid() {
+		size_t dataSize = NormalizedIntensity.size();
+		if (dataSize == 0) return false;
+		if (hasOpacity && Opacity.size() != dataSize) return false;
+		if (hasDensityScale && DensityScale.size() != dataSize) return false;
+		if (hasDiffuse && Diffuse.size() != dataSize) return false;
+		if (hasSpecular && Specular.size() != dataSize) return false;
+		if (hasRoughness && Roughness.size() != dataSize) return false;
+		if (hasMetallic && Metallic.size() != dataSize) return false;
+		if (hasEmission && Emission.size() != dataSize) return false;
+		if (hasAbsorption && Absorption.size() != dataSize) return false;
+		if (hasScattering && Scattering.size() != dataSize) return false;
+		if (hasHG_Phase && HG_Phase.size() != dataSize) return false;
+
+		if (type != "Intensity" && type != "GradientIntensity") return false;
+
+		return true;
 	}
 
 	std::string ToString() {
 
-		return "";
+		if (!isValid()) return "Invalid Scalar TransferFunction Preset";
+
+		std::string s = "Scalar TransferFunction Preset Properties: Size=[" + std::to_string(NormalizedIntensity.size()) + "]";
+		if (hasOpacity) s += " Opacity ";
+		if (hasDensityScale) s += " DensityScale ";
+		if (hasDiffuse) s += " Diffuse ";
+		if (hasSpecular) s += " Specular ";
+		if (hasRoughness) s += " Roughness ";
+		if (hasMetallic) s += " Metallic ";
+		if (hasEmission) s += " Emission ";
+		if (hasAbsorption) s += " Absorption ";
+		if (hasScattering) s += " Scattering ";
+		if (hasHG_Phase) s += " HG_Phase ";
+		return s;
 	}
+
+private:
+
 };
 
 class ScenePreset {
 public:
-	ScenePreset() :
-		m_CameraPreset(),
-		m_VisualizerPreset(),
-		m_FilmPreset(),
-		m_SceneGeometryPreset()
+	ScenePreset()
 	{
+		reset();
+	}
+
+	void reset() {
 		SceneFilePath = "";
 		SceneFileName = "";
 		SceneFileDir = "";
+		GeometryFileName = "";
+		DataMapperFileName = "";
+
+		m_CameraPreset.reset();
+		m_VisualizerPreset.reset();
+		m_FilmPreset.reset();
+
+		m_MedicalMeshDataPreset.clear();
+		m_MedicalMeshDataPreset.shrink_to_fit();
+		m_EnvironmentMeshPreset.clear();
+		m_EnvironmentMeshPreset.shrink_to_fit();
+
+		m_PointLightPreset.clear();
+		m_PointLightPreset.shrink_to_fit();
+		m_QuadAreaLightPreset.clear();
+		m_QuadAreaLightPreset.shrink_to_fit();
+
+		m_STF_Preset.clear();
+		m_STF_Preset.shrink_to_fit();
 	}
 
+	// Basic
 	CameraPreset m_CameraPreset;
 	VisualizerPreset m_VisualizerPreset;
 	FilmPreset m_FilmPreset;
 
-	SceneGeometryPreset m_SceneGeometryPreset;
-	std::vector<STF_Preset> m_STF_Preset;
-
+	// There can only be one volume; but because multiple meshes may form one medical data, multiple meshes are supported.
+	MedicalVolumeDataPreset m_MedicalVolumeDataPreset;
+	std::vector<MedicalMeshDataPreset> m_MedicalMeshDataPreset;
+	std::vector<EnvironmentMeshPreset> m_EnvironmentMeshPreset;
+	// Light
 	std::vector<PointLightPreset> m_PointLightPreset;
 	std::vector<QuadAreaLightPreset> m_QuadAreaLightPreset;
+	HdrEnvironmentLightPreset m_HdrEnvironmentLightPreset;
 
+	// DataMapper
+	std::vector<STF_Preset> m_STF_Preset;
+
+	// File path
 	std::string SceneFilePath;
 	std::string SceneFileName;
 	std::string SceneFileDir;
+	std::string GeometryFileName;
+	std::string DataMapperFileName;
 
 	std::string ToString() {
 		return "ScenePreset: "
 			"  SceneFilePath:[" + SceneFilePath + "]" +
+			"  SceneFileDir:[" + SceneFileDir + "]" +
 			"  SceneFileName:[" + SceneFileName + "]" +
-			"  SceneFileDir:[" + SceneFileDir + "]";
+			"  GeometryFileName:[" + GeometryFileName + "]" +
+			"  DataMapperFileName:[" + DataMapperFileName + "]";
 	}
 };
 

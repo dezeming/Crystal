@@ -187,31 +187,39 @@ DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
 
     // parse XML File
     parser.setFilePath(sceneFile);
-    parser.readSceneXML();
+    bool readFlag = parser.readSceneXML();
+    if (!readFlag) {
 
-    // Initialize TransferFunction DockWidget
-    //setQtTsFuncDock(sp);
+        Print_Gui_Error("Scene file loading unsuccessful!");
+    }
+    else {
 
-    // Initialize QtVisualizer
-    //m_QtVisualizer = new QtVisualizer;
-    //m_QtVisualizer->Initialization(sp.m_ScenePreset.m_VisualizerPreset);
+        // Initialize TransferFunction DockWidget
+        //setQtTsFuncDock(sp);
 
-    setupWidget();
+        // Initialize QtVisualizer
+        //m_QtVisualizer = new QtVisualizer;
+        //m_QtVisualizer->Initialization(sp.m_ScenePreset.m_VisualizerPreset);
 
-    setupDock();
+        setupWidget();
 
-    // start rendering thread
-    //m_QtRenderThread = new QtRenderThread();
-    //m_QtRenderThread->setVisualizer(m_QtVisualizer->m_Visualizer);
-    //m_QtRenderThread->setFrameBuffer(m_QtVisualizer->m_FrameBuffer);
+        setupDock();
 
-    //m_QtRenderThread->renderBegin();
-    //m_QtRenderThread->start();
-   // connect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
+        // start rendering thread
+        //m_QtRenderThread = new QtRenderThread();
+        //m_QtRenderThread->setVisualizer(m_QtVisualizer->m_Visualizer);
+        //m_QtRenderThread->setFrameBuffer(m_QtVisualizer->m_FrameBuffer);
 
-    // Test
-    // CrystalAlgrithm::printCudaDevice();
-    // CrystalAlgrithm::SpectrumTest();
+        //m_QtRenderThread->renderBegin();
+        //m_QtRenderThread->start();
+       // connect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
+
+        // Test
+        // CrystalAlgrithm::printCudaDevice();
+        // CrystalAlgrithm::SpectrumTest();
+    }
+
+
 
 }
 

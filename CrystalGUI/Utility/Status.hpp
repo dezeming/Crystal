@@ -46,6 +46,20 @@ private slots:
 
 extern GuiStatus m_GuiStatus;
 
+class RenderingStatus : public QObject {
+    Q_OBJECT
+public:
+    RenderingStatus() {};
+    ~RenderingStatus() {};
+
+signals:
+
+
+private slots:
+
+
+};
+
 }
 
 #endif

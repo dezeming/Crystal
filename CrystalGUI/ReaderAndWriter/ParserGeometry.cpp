@@ -22,11 +22,30 @@
 
 #include "CrystalGUI/Utility/Common.hpp"
 
+#include "ParserGeometry.hpp"
 
 namespace CrystalGUI {
 
 
+bool ParserScene::readMedicalVolumeData(const QDomNodeList& nodes) {
+    bool readFlag = true;
+    return readFlag;
+}
 
+bool ParserScene::readMedicalMeshData(const QDomNodeList& nodes) {
+    bool readFlag = true;
+    return readFlag;
+}
+
+bool ParserScene::readEnvironmentMeshData(const QDomNodeList& nodes) {
+    bool readFlag = true;
+    return readFlag;
+}
+
+bool ParserScene::readLightData(const QDomNodeList& nodes) {
+    bool readFlag = true;
+    return readFlag;
+}
 
 
 

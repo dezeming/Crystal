@@ -17,17 +17,10 @@
     Github site: <https://github.com/dezeming/Crystal>
 */
 
-#ifndef __ParserDataMapper_hpp__
-#define __ParserDataMapper_hpp__
+#include "Spectrum.h"
 
-#include "CrystalGUI/Utility/Common.hpp"
+namespace CrystalAlgrithm {
 
-#include <QtXml/QtXml>
-#include <QtXml/QDomDocument>
-
-#include "ParserScene.hpp"
-
-namespace CrystalGUI {
 
 
 
@@ -37,14 +30,4 @@ namespace CrystalGUI {
 
 
 }
-
-
-#endif
-
-
-
-
-
-
-
 

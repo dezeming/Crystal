@@ -1,67 +1,63 @@
-<DataMapperDim value="2" />
-<MaterialMapper>
-	<Type type="ScalarIntensity" />
-	<GlobalProperties>
-	</GlobalProperties>
-	<OneNodeProperties>
-		<DensityScale components="1" type="float" RangeBtn="0.1" RangeTop="10.0" />
-		<!-- Strictly Physically-based -->
-		<Emission components="3" type="float" RangeBtn="0" RangeTop="1.0" />
-		<Absorption components="3" type="float" RangeBtn="0" RangeTop="1.0" />
-		<Scattering components="3" type="float" RangeBtn="0" RangeTop="1.0" />
-		<HG_Phase components="1" type="float" RangeBtn="-1.0" RangeTop="1.0" />
-		<!-- Physically-based -->
-		<Opacity components="1" type="float" RangeBtn="0" RangeTop="1.0" />
-		<Diffuse components="3" type="float" RangeBtn="0" RangeTop="1.0" />
-		<Specular components="3" type="float" RangeBtn="0" RangeTop="1.0" />
-		<Roughness components="1" type="float" RangeBtn="0" RangeTop="1.0" />
-		<Metallic components="1" type="float" RangeBtn="0" RangeTop="1.0"  />
-	</OneNodeProperties>
-	<NodesPropertiesArray>
-		<Node>
-			<NormalizedIntensity value="0"/>
-			<DensityScale value="5.0" />
-			<Emission G="0.3" R="0.5" B="0.2" scale="1.0" />
-			<Absorption G="0.2" R="0.3" B="0.3"/>
-			<Scattering G="0.5" R="0.2" B="0.5"/>
-			<HG_Phase g="-0.3" />
-			<Opacity value="0"/>
-			<Diffuse G="0.3" R="0.5" B="0.2"/>
-			<Specular G="0.3" R="0.5" B="0.2"/>
-			<Roughness value="0.5"/>
-			<Metallic value="0.5" />
-		</Node>
-		<Node>
-			<NormalizedIntensity value="0.23597"/>
-			<DensityScale value="5.0" />
-			<Emission G="0.3" R="0.5" B="0.2" scale="1.0" />
-			<Absorption G="0.2" R="0.3" B="0.3"/>
-			<Scattering G="0.5" R="0.2" B="0.5"/>
-			<HG_Phase g="-0.3" />
-			<Opacity value="0"/>
-			<Diffuse G="0.3" R="0.5" B="0.2"/>
-			<Specular G="0.3" R="0.5" B="0.2"/>
-			<Roughness value="0.5"/>
-			<Metallic value="0.5" />
-		</Node>
-		<Node>
-			<NormalizedIntensity value="1"/>
-			<DensityScale value="5.0" />
-			<Emission G="0.3" R="0.5" B="0.2" scale="1.0" />
-			<Absorption G="0.2" R="0.3" B="0.3"/>
-			<Scattering G="0.5" R="0.2" B="0.5"/>
-			<HG_Phase g="-0.3" />
-			<Opacity value="0"/>
-			<Diffuse G="0.3" R="0.5" B="0.2"/>
-			<Specular G="0.3" R="0.5" B="0.2"/>
-			<Roughness value="0.5"/>
-			<Metallic value="0.5" />
-		</Node>
-	</NodesPropertiesArray>
-</MaterialMapper>
-
-<MaterialMapper>
-
-</MaterialMapper>
-
+<DataMapper> 
+	<ScalarTransferFunction>
+		<Type type="Intensity" />
+		<GlobalProperties>
+		</GlobalProperties>
+		<OneNodeProperties>
+			<DensityScale components="1" type="float" RangeBtn="0.1" RangeTop="10.0" />
+			<!-- Strictly Physically-based -->
+			<Emission components="3" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Absorption components="3" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Scattering components="3" type="float" RangeBtn="0" RangeTop="1.0" />
+			<HG_Phase components="1" type="float" RangeBtn="-1.0" RangeTop="1.0" />
+			<!-- Physically-based -->
+			<Opacity components="1" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Diffuse components="3" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Specular components="3" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Roughness components="1" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Metallic components="1" type="float" RangeBtn="0" RangeTop="1.0"  />
+		</OneNodeProperties>
+		<NodesPropertiesArray>
+			<Node>
+				<NormalizedIntensity value="0"/>
+				<DensityScale value="5.0" />
+				<Emission G="0.3" R="0.5" B="0.2" scale="1.0" />
+				<Absorption G="0.2" R="0.3" B="0.3"/>
+				<Scattering G="0.5" R="0.2" B="0.5"/>
+				<HG_Phase g="-0.3" />
+				<Opacity value="0"/>
+				<Diffuse G="0.3" R="0.5" B="0.2"/>
+				<Specular G="0.3" R="0.5" B="0.2"/>
+				<Roughness value="0.5"/>
+				<Metallic value="0.5" />
+			</Node>
+			<Node>
+				<NormalizedIntensity value="0.23597"/>
+				<DensityScale value="5.0" />
+				<Emission G="0.3" R="0.5" B="0.2" scale="1.0" />
+				<Absorption G="0.2" R="0.3" B="0.3"/>
+				<Scattering G="0.5" R="0.2" B="0.5"/>
+				<HG_Phase g="-0.3" />
+				<Opacity value="0"/>
+				<Diffuse G="0.3" R="0.5" B="0.2"/>
+				<Specular G="0.3" R="0.5" B="0.2"/>
+				<Roughness value="0.5"/>
+				<Metallic value="0.5" />
+			</Node>
+			<Node>
+				<NormalizedIntensity value="1"/>
+				<DensityScale value="5.0" />
+				<Emission G="0.3" R="0.5" B="0.2" scale="1.0" />
+				<Absorption G="0.2" R="0.3" B="0.3"/>
+				<Scattering G="0.5" R="0.2" B="0.5"/>
+				<HG_Phase g="-0.3" />
+				<Opacity value="0"/>
+				<Diffuse G="0.3" R="0.5" B="0.2"/>
+				<Specular G="0.3" R="0.5" B="0.2"/>
+				<Roughness value="0.5"/>
+				<Metallic value="0.5" />
+			</Node>
+		</NodesPropertiesArray>
+	</ScalarTransferFunction>
+<DataMapper/> 
 

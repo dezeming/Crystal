@@ -216,6 +216,12 @@ set(Utility
 	CrystalAlgrithm/Utility/cuda_common.cu
 	CrystalAlgrithm/Utility/timerRandom.hpp
 	CrystalAlgrithm/Utility/timerRandom.cpp
+	CrystalAlgrithm/Utility/Geometry.h
+	CrystalAlgrithm/Utility/Geometry.cpp
+	CrystalAlgrithm/Utility/Transform.h
+	CrystalAlgrithm/Utility/Transform.cpp
+	CrystalAlgrithm/Utility/Spectrum.h
+	CrystalAlgrithm/Utility/Spectrum.cpp
 )
 # Make the Utility group
 SOURCE_GROUP("Utility" FILES ${Utility})
@@ -230,7 +236,8 @@ set(Scene
 # Make the Scene group
 SOURCE_GROUP("Scene" FILES ${Scene})
 
-#set(CMAKE_BUILD_TYPE "debug")
+
+#set(CMAKE_BUILD_TYPE "release")
 
 cuda_add_library(CrystalAlgrithm STATIC 
 	${Utility}

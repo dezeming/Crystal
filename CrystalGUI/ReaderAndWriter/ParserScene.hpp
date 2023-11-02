@@ -30,6 +30,7 @@
 
 #include <QtXml\QtXml>
 #include <QtXml\QDomDocument>
+#include <vector>
 
 #include "CrystalAlgrithm/Scene/ScenePreset.h"
 
@@ -71,6 +72,8 @@ public:
 	QString getFileDir() {
 		return sceneFileDir;
 	}
+
+	// Reader
 	bool readSceneXML();
 
 	bool readSceneCameraXML(const QDomNodeList& nodes);
@@ -78,16 +81,29 @@ public:
 	bool readSceneVisualizerXML(const QDomNodeList& nodes);
 
 	bool readSceneGeometryXML(const QDomNodeList& nodes);
-	bool readSceneDataMapperXML(const QDomNodeList& nodes);
-	
+	bool readMedicalVolumeData(const QDomNodeList& nodes);
+	bool readMedicalMeshData(const QDomNodeList& nodes);
+	bool readEnvironmentMeshData(const QDomNodeList& nodes);
+	bool readLightData(const QDomNodeList& nodes);
 
+	// STF
+	bool readSceneDataMapperXML(const QDomNodeList& nodes);
+	bool readScalarTransFuncXML(const QDomNodeList& nodes);
+	bool readScalarTransFuncGlobalPropXML(const QDomNodeList& nodes, CrystalAlgrithm::STF_Preset& stf);
+	bool readScalarTransFuncOneNodePropXML(const QDomNodeList& nodes, CrystalAlgrithm::STF_Preset& stf);
+	bool readScalarTransFuncNodePropXML(const QDomNodeList& nodes, CrystalAlgrithm::STF_Preset& stf);
+
+	// Writer
 	bool writeSceneXML();
 
+	// Inspector
+	bool InspectorScene();
 
 	CrystalAlgrithm::ScenePreset m_ScenePreset;
 
 private:
 	
+	std::vector<float> stringToFloatVector(std::string input, std::string separator = ",");
 
 	QDomDocument reader;
 	QDomDocument writer;
@@ -95,6 +111,9 @@ private:
 	QString sceneFilePath;
 	QString sceneFileDir;
 	QString sceneFileName;
+
+	QString GeometryFileName;
+	QString DataMapperFileName;
 
 	QString rootName;
 };

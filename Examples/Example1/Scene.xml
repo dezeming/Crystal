@@ -11,6 +11,9 @@
 		<Visualizer type="kroesSSVisualizer" />
 	</Visualizer>
 	<SceneGeometry> 
-		<SceneGeometryFile file="SceneGeometry.xml" />
+		<GeometryFileName file="SceneGeometry.xml" />
 	</SceneGeometry>
+	<DataMapper> 
+		<DataMapperFileName file="DataMapper.xml" />
+	</DataMapper>
 </Scene>

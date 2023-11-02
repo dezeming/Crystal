@@ -97,7 +97,7 @@ If the project has already been cloned, but there are no clone sub modules, ente
 
 ## Parser XML file
 
-Scene file includes 4 components: Camera, Film, Visualizer, SceneGeometry. The scene file is used to intialize classes in ScenePreset.h.
+Scene.xml file includes 4 components: Camera, Film, Visualizer, SceneGeometry, DataMapper. The scene file is used to intialize classes in 'ScenePreset.h'.
 
 Scene.xml
 > - Basic: CameraPreset, FilmPreset, VisualizerPreset

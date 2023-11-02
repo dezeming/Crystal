@@ -17,11 +17,15 @@
     Github site: <https://github.com/dezeming/Crystal>
 */
 
-#ifndef __ParserLight_h__
-#define __ParserLight_h__
+#ifndef __ParserGeometry_h__
+#define __ParserGeometry_h__
 
 #include "CrystalGUI/Utility/Common.hpp"
 
+#include <QtXml/QtXml>
+#include <QtXml/QDomDocument>
+
+#include "ParserScene.hpp"
 
 namespace CrystalGUI {
 

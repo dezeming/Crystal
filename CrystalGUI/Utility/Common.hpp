@@ -78,7 +78,7 @@ inline void getDataInfo(std::string info, QString data, const char* file, int li
 	COUT_YELLOW("[" + std::string(info) + ": " + (data.toStdString()) + "]") << " in " + std::string(file) + " at line " + std::to_string(line) << std::endl;
 }
 
-#define Print_String( info, data ) (getDataInfo( info,  __FILE__, __LINE__ ))
+#define Print_String( info ) (getDataInfo( info,  __FILE__, __LINE__ ))
 #define Print_Data_Info( info, data ) (getDataInfo( info, data,  __FILE__, __LINE__ ))
 
 

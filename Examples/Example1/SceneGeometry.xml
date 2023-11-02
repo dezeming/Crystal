@@ -1,37 +1,35 @@
-<MedicalVolumeData> 
-	<DataFile> 
-		<type="mhd" path="D:/Dataset/Volume/test.mhd"/>
-	</DataFile>
-	<Transform>
-		<!-- permute axes -->
-		<Permute Axis="0,1,2" />
-		<Rotate X="20" Y="30" />
-		<Translate X="0" Y="0" Z="0" />
-	</Transform>
-	<DataMapper> 
-		<DataMapperFileName file="DataMapper.xml" />
-	</DataMapper>
-</MedicalVolumeData>
-<MedicalMeshData>
-</MedicalMeshData>
-<EnvironmentMesh>
-</EnvironmentMesh>
-<Light>
-	<PointLight>
+<SceneGeometry>
+	<MedicalVolumeData> 
+		<DataFile type="mhd" path="D:/Dataset/Volume/test.mhd"/>
 		<Transform>
-			<Translate X="0.0" Y="5.0" Z="0.0" />
-		</Transform>
-		<Radiance R="1.0" G="1.0" B="1.0" scale="1.0" />
-	</PointLight>
-	<QuadAreaLight>
-		<SideLength X="1.0" Z="1.0" />
-		<Transform>
+			<!-- permute axes -->
+			<Permute Axis="0,1,2" />
 			<Rotate X="20" Y="30" />
-			<Translate X="0.0" Y="5.0" Z="0.0" />
+			<Translate X="0" Y="0" Z="0" />
 		</Transform>
-		<Radiance R="1.0" G="1.0" B="1.0" scale="1.0" />		
-	</QuadAreaLight>
-</Light>
+	</MedicalVolumeData>
+	<MedicalMeshData>
+	</MedicalMeshData>
+	<EnvironmentMesh>
+	</EnvironmentMesh>
+	<Light>
+		<PointLight>
+			<Transform>
+				<Translate X="0.0" Y="5.0" Z="0.0" />
+			</Transform>
+			<Radiance R="1.0" G="1.0" B="1.0" scale="1.0" />
+		</PointLight>
+		<QuadAreaLight>
+			<SideLength X="1.0" Z="1.0" />
+			<Transform>
+				<Rotate X="20" Y="30" />
+				<Translate X="0.0" Y="5.0" Z="0.0" />
+			</Transform>
+			<Radiance R="1.0" G="1.0" B="1.0" scale="1.0" />		
+		</QuadAreaLight>
+	</Light>
+</SceneGeometry>
+
 
 
 
