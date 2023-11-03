@@ -305,7 +305,7 @@ public:
 
 	bool isValid() {
 		size_t dataSize = NormalizedIntensity.size();
-		if (dataSize == 0) return false;
+		if (dataSize < 2) return false;
 		if (hasOpacity && Opacity.size() != dataSize) return false;
 		if (hasDensityScale && DensityScale.size() != dataSize) return false;
 		if (hasDiffuse && Diffuse.size() != dataSize) return false;
@@ -317,16 +317,30 @@ public:
 		if (hasScattering && Scattering.size() != dataSize) return false;
 		if (hasHG_Phase && HG_Phase.size() != dataSize) return false;
 
-		if (type != "Intensity" && type != "GradientIntensity") return false;
+		if (type != "Intensity" && type != "GradientMagnitude") return false;
+
+		// Determine whether the elements are in ascending order
+		for (size_t i = 1; i < NormalizedIntensity.size(); ++i) {
+			if (NormalizedIntensity[i] < NormalizedIntensity[i - 1]) {
+				return false; 
+			}
+		}
+		// Determine if the maximum and minimum values are 0 and 1 respectively
+		if (!IS_CLOSE(NormalizedIntensity[0], 0.0f, 0.001) ||
+			!IS_CLOSE(NormalizedIntensity[dataSize - 1], 1.0f, 0.001)) {
+			return false;
+		}
+		NormalizedIntensity[0] = 0.0f; NormalizedIntensity[dataSize - 1] = 1.0f;
 
 		return true;
 	}
 
-	std::string ToString() {
-
-		if (!isValid()) return "Invalid Scalar TransferFunction Preset";
-
-		std::string s = "Scalar TransferFunction Preset Properties: Size=[" + std::to_string(NormalizedIntensity.size()) + "]";
+	std::string ToString() {	
+		std::string s;
+		if (!isValid()) {
+			s += "Invalid ";
+		}
+		s += "Scalar TransferFunction Preset Properties: Size=[" + std::to_string(NormalizedIntensity.size()) + "]";
 		if (hasOpacity) s += " Opacity ";
 		if (hasDensityScale) s += " DensityScale ";
 		if (hasDiffuse) s += " Diffuse ";

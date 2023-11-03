@@ -23,6 +23,7 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
+#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -55,6 +56,8 @@ namespace CrystalAlgrithm {
 
 #define MaxFloat std::numeric_limits<float>::max()
 #define Infinity std::numeric_limits<float>::infinity()
+
+#define IS_CLOSE(a, b, epsilon) (fabs((a) - (b)) < (epsilon))
 
 // Some Utility functions
 HOST_AND_DEVICE inline float Clamp(float val, float low, float high) {

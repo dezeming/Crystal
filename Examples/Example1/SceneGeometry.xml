@@ -4,9 +4,10 @@
 		<Transform>
 			<!-- permute axes -->
 			<Permute Axis="0,1,2" />
-			<Rotate X="20" Y="30" />
+			<RotateXY X="20" Y="30" />
 			<Translate X="0" Y="0" Z="0" />
 		</Transform>
+		<Structure type="Texture3D" />
 	</MedicalVolumeData>
 	<MedicalMeshData>
 	</MedicalMeshData>
@@ -22,11 +23,17 @@
 		<QuadAreaLight>
 			<SideLength X="1.0" Z="1.0" />
 			<Transform>
-				<Rotate X="20" Y="30" />
+				<RotateXY X="20" Y="30" />
 				<Translate X="0.0" Y="5.0" Z="0.0" />
 			</Transform>
 			<Radiance R="1.0" G="1.0" B="1.0" scale="1.0" />		
 		</QuadAreaLight>
+		<HdrEnvironmentLight>
+			<File path="" />
+			<Scale value="1.0" />
+			<Resolution width="2000" height="1000" />
+			<RotateXY X="0" Y="30" />
+		</HdrEnvironmentLight>
 	</Light>
 </SceneGeometry>
 

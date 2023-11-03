@@ -29,6 +29,24 @@ namespace CrystalGUI {
 
 bool ParserScene::readMedicalVolumeData(const QDomNodeList& nodes) {
     bool readFlag = true;
+	for (int i = 0; i < nodes.count(); i++) {
+		QDomNode childNode = nodes.at(i);
+		QString tag = childNode.toElement().tagName();
+		if ("DataFile" == tag) {
+			
+			childNode.toElement().attribute("value").toStdString();
+		}
+		else if ("Transform" == tag) {
+			
+		}
+		else if ("Structure" == tag) {
+			
+		}
+		else {
+			readFlag = false;
+			Print_Gui_Error("Unwanted tag name while parsering Scene Xml: " + tag.toStdString());
+		}
+	}
     return readFlag;
 }
 
@@ -44,6 +62,24 @@ bool ParserScene::readEnvironmentMeshData(const QDomNodeList& nodes) {
 
 bool ParserScene::readLightData(const QDomNodeList& nodes) {
     bool readFlag = true;
+	for (int i = 0; i < nodes.count(); i++) {
+		QDomNode childNode = nodes.at(i);
+		QString tag = childNode.toElement().tagName();
+		if ("PointLight" == tag) {
+
+			childNode.toElement().attribute("value").toStdString();
+		}
+		else if ("QuadAreaLight" == tag) {
+
+		}
+		else if ("HdrEnvironmentLight" == tag) {
+
+		}
+		else {
+			readFlag = false;
+			Print_Gui_Error("Unwanted tag name while parsering Scene Xml: " + tag.toStdString());
+		}
+	}
     return readFlag;
 }
 

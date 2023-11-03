@@ -79,9 +79,71 @@ bool ParserScene::readScalarTransFuncNodePropXML(const QDomNodeList& nodes, Crys
 	bool readFlag = true;
 
 	CrystalAlgrithm::Spectrum3 Emission(0.0f), Absorption(0.0f), Scattering(0.0f), Diffuse(0.0f), Specular(0.0f), Metallic(0.0f);
-	float DensityScale(1.0f), HG_Phase(0.0f), Opacity(0.0f), Roughness(0.0f);
+	float NormalizedIntensity(0.0f), DensityScale(1.0f), HG_Phase(0.0f), Opacity(0.0f), Roughness(0.0f);
 
+	for (int i = 0; i < nodes.count(); i++) {
+		QDomNode childNode = nodes.at(i);
+		QString tag = childNode.toElement().tagName();
+		if ("NormalizedIntensity" == tag) {
+			NormalizedIntensity = childNode.toElement().attribute("value").toFloat();
+		}
+		else if ("DensityScale" == tag) {
+			DensityScale = childNode.toElement().attribute("value").toFloat();
+		}
+		else if ("Absorption" == tag) {
+			Absorption[0] = childNode.toElement().attribute("R").toFloat();
+			Absorption[1] = childNode.toElement().attribute("G").toFloat();
+			Absorption[2] = childNode.toElement().attribute("B").toFloat();
+		}
+		else if ("Opacity" == tag) {
+			Opacity = childNode.toElement().attribute("value").toFloat();
+		}
+		else if ("HG_Phase" == tag) {
+			HG_Phase = childNode.toElement().attribute("g").toFloat();
+		}
+		else if ("Emission" == tag) {
+			Emission[0] = childNode.toElement().attribute("R").toFloat();
+			Emission[1] = childNode.toElement().attribute("G").toFloat();
+			Emission[2] = childNode.toElement().attribute("B").toFloat();
+		}
+		else if ("Scattering" == tag) {
+			Scattering[0] = childNode.toElement().attribute("R").toFloat();
+			Scattering[1] = childNode.toElement().attribute("G").toFloat();
+			Scattering[2] = childNode.toElement().attribute("B").toFloat();
+		}
+		else if ("Diffuse" == tag) {
+			Diffuse[0] = childNode.toElement().attribute("R").toFloat();
+			Diffuse[1] = childNode.toElement().attribute("G").toFloat();
+			Diffuse[2] = childNode.toElement().attribute("B").toFloat();
+		}
+		else if ("Specular" == tag) {
+			Specular[0] = childNode.toElement().attribute("R").toFloat();
+			Specular[1] = childNode.toElement().attribute("G").toFloat();
+			Specular[2] = childNode.toElement().attribute("B").toFloat();
+		}
+		else if ("Roughness" == tag) {
+			Roughness = childNode.toElement().attribute("value").toFloat();
+		}
+		else if ("Metallic" == tag) {
+			Metallic = childNode.toElement().attribute("value").toFloat();
+		}
+		else {
+			readFlag = false;
+			Print_Gui_Error("Unwanted tag name while parsering Scene Xml: " + tag.toStdString());
+		}
+	}
 
+	stf.NormalizedIntensity.push_back(NormalizedIntensity);
+	if (stf.hasOpacity) stf.Opacity.push_back(Opacity);
+	if (stf.hasDensityScale) stf.DensityScale.push_back(DensityScale);
+	if (stf.hasDiffuse) stf.Diffuse.push_back(Diffuse);
+	if (stf.hasSpecular) stf.Specular.push_back(Specular);
+	if (stf.hasRoughness) stf.Roughness.push_back(Roughness);
+	if (stf.hasMetallic) stf.Metallic.push_back(Metallic);
+	if (stf.hasEmission) stf.Emission.push_back(Emission);
+	if (stf.hasAbsorption) stf.Absorption.push_back(Absorption);
+	if (stf.hasScattering) stf.Scattering.push_back(Scattering);
+	if (stf.hasHG_Phase) stf.HG_Phase.push_back(HG_Phase);
 
 	return readFlag;
 }
