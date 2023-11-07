@@ -29,27 +29,45 @@
 #include <QMouseEvent>
 #include <QGroupBox>
 
+#include "CrystalGUI/Utility/Utility.hpp"
+
+namespace CrystalAlgrithm {
+    class STF_Preset;
+}
+
 namespace CrystalGUI {
+
 
 class ScalarTransferFuncGraphicsView : public QGraphicsView {
 	Q_OBJECT
 
 public:
-    ScalarTransferFuncGraphicsView(QGraphicsView* parent = Q_NULLPTR);
+    ScalarTransferFuncGraphicsView(QGraphicsView* parent, const CrystalAlgrithm::STF_Preset& stfp);
 	~ScalarTransferFuncGraphicsView();
 
-	QGraphicsScene scene;
-
-
+	QGraphicsScene* scene;
 
 };
 
 class ScalarTransferFuncWidget : public QGroupBox {
     Q_OBJECT
 public:
-    ScalarTransferFuncWidget(QGroupBox* parent = Q_NULLPTR);
+    ScalarTransferFuncWidget(QGroupBox* parent, const CrystalAlgrithm::STF_Preset& stfp);
     ~ScalarTransferFuncWidget();
 
+    QVBoxLayout *layout;
+
+    FloatSetter* DensityScaleSetter;
+    FloatSetter* HG_PhaseSetter;
+    FloatSetter* OpacitySetter;
+    FloatSetter* RoughnessSetter;
+    FloatSetter* MetallicSetter;
+
+    RGBSetter* ScatteringSetter;
+    RGBSetter* EmissionSetter;
+    RGBSetter* AbsorptionSetter;
+    RGBSetter* DiffuseSetter;
+    RGBSetter* SpecularSetter;
 
 };
 

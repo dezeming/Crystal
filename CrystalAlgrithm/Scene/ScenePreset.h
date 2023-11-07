@@ -59,8 +59,15 @@ public:
 		return "CameraPreset: "
 			"  CameraType:[" + CameraType + "]" + 
 			"  fov:[" + std::to_string(fov) + "]" +
-			" LookAt:from[" + std::to_string(lookatFrom[0]) + "," + std::to_string(lookatFrom[1]) + "," + std::to_string(lookatFrom[2]) + "]" + 
-			"to[" + std::to_string(lookatTo[0]) + "," + std::to_string(lookatTo[1]) + "," + std::to_string(lookatTo[2]) +"]";
+			" LookAt:from[" + fromToString() + "]" +
+			"to[" + toToString() +"]";
+	}
+
+	std::string fromToString() {
+		return std::to_string(lookatFrom[0]) + "," + std::to_string(lookatFrom[1]) + "," + std::to_string(lookatFrom[2]);
+	}
+	std::string toToString() {
+		return std::to_string(lookatTo[0]) + "," + std::to_string(lookatTo[1]) + "," + std::to_string(lookatTo[2]);
 	}
 };
 
@@ -115,6 +122,56 @@ public:
 };
 
 /****** Geometry ******/
+
+//texture
+class TexturePreset {
+public:
+	TexturePreset() {
+		reset();
+	}
+
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
+	std::string ToString() {
+
+		return "";
+	}
+
+	std::string name;
+	std::string type;
+	std::string filePath;
+	Spectrum3 albedo;
+};
+
+// material
+class MaterialPreset {
+public:
+	MaterialPreset() {
+		reset();
+	}
+
+	void reset() {
+
+	}
+	bool isValid() {
+
+	}
+	std::string ToString() {
+
+		return "";
+	}
+
+	std::string name;
+	std::string type;
+	std::string diffTex;
+	std::string specTex;
+	std::string alphaTex;
+};
+
 
 // Volume & Mesh
 
@@ -413,6 +470,44 @@ public:
 	std::string SceneFileDir;
 	std::string GeometryFileName;
 	std::string DataMapperFileName;
+
+	// update ScenePreset From Interaction
+	bool updateScenePresetFromInteraction();
+
+	bool isValid() {
+		bool flag = true;
+		// Basic Check
+		flag = flag && m_CameraPreset.isValid();
+		flag = flag && m_VisualizerPreset.isValid();
+		flag = flag && m_FilmPreset.isValid();
+
+		flag = flag && m_MedicalVolumeDataPreset.isValid();
+		for (int i = 0; i < m_MedicalMeshDataPreset.size(); i++) {
+			flag = flag && m_MedicalMeshDataPreset[i].isValid();
+		}
+		for (int i = 0; i < m_EnvironmentMeshPreset.size(); i++) {
+			flag = flag && m_EnvironmentMeshPreset[i].isValid();
+		}
+
+		for (int i = 0; i < m_PointLightPreset.size(); i++) {
+			flag = flag && m_PointLightPreset[i].isValid();
+		}
+		for (int i = 0; i < m_QuadAreaLightPreset.size(); i++) {
+			flag = flag && m_QuadAreaLightPreset[i].isValid();
+		}
+		flag = flag && m_HdrEnvironmentLightPreset.isValid();
+
+		for (int i = 0; i < m_STF_Preset.size(); i++) {
+			flag = flag && m_STF_Preset[i].isValid();
+		}
+
+		// Semantic Check
+
+		// Adaptability of Visualizers and DataMapper
+
+
+
+	}
 
 	std::string ToString() {
 		return "ScenePreset: "

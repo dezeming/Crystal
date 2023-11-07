@@ -34,7 +34,10 @@ bool ParserScene::readMedicalVolumeData(const QDomNodeList& nodes) {
 		QString tag = childNode.toElement().tagName();
 		if ("DataFile" == tag) {
 			
-			childNode.toElement().attribute("value").toStdString();
+			childNode.toElement().attribute("type").toStdString();
+		}
+		else if ("DataDim" == tag) {
+
 		}
 		else if ("Transform" == tag) {
 			
@@ -52,11 +55,35 @@ bool ParserScene::readMedicalVolumeData(const QDomNodeList& nodes) {
 
 bool ParserScene::readMedicalMeshData(const QDomNodeList& nodes) {
     bool readFlag = true;
+	for (int i = 0; i < nodes.count(); i++) {
+		QDomNode childNode = nodes.at(i);
+		QString tag = childNode.toElement().tagName();
+		if ("Mesh" == tag) {
+
+			childNode.toElement().attribute("value").toStdString();
+		}
+		else {
+			readFlag = false;
+			Print_Gui_Error("Unwanted tag name while parsering Scene Xml: " + tag.toStdString());
+		}
+	}
     return readFlag;
 }
 
 bool ParserScene::readEnvironmentMeshData(const QDomNodeList& nodes) {
     bool readFlag = true;
+	for (int i = 0; i < nodes.count(); i++) {
+		QDomNode childNode = nodes.at(i);
+		QString tag = childNode.toElement().tagName();
+		if ("Mesh" == tag) {
+
+			childNode.toElement().attribute("value").toStdString();
+		}
+		else {
+			readFlag = false;
+			Print_Gui_Error("Unwanted tag name while parsering Scene Xml: " + tag.toStdString());
+		}
+	}
     return readFlag;
 }
 

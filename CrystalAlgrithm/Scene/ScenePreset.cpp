@@ -23,6 +23,15 @@
 namespace CrystalAlgrithm{
 
 
+bool ScenePreset::updateScenePresetFromInteraction() {
+
+
+}
+
+
+
+
+
 
 }
 

@@ -219,6 +219,10 @@ DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
         // CrystalAlgrithm::SpectrumTest();
     }
 
+    bool writeFlag = parser.writeSceneXML("./OutputScene");
+    if (!writeFlag) {
+        Print_Gui_Error("Scene file write unsuccessful!");
+    }
 
 
 }
@@ -275,7 +279,7 @@ void DisplayMainWindow::setupWidget(void) {
 }
 
 void DisplayMainWindow::setupDock(void) {
-    m_DataMapperDockWidget = new DataMapperDockWidget;
+    m_DataMapperDockWidget = new DataMapperDockWidget(Q_NULLPTR, parser.m_ScenePreset);
     addDockWidget(Qt::LeftDockWidgetArea, m_DataMapperDockWidget);
 
     //tabifyDockWidget(m_DataMapperDockWidget, m_LightSetDockWidget);

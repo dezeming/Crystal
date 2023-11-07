@@ -22,10 +22,98 @@ Github site: <https://github.com/dezeming/Crystal>
 
 #include "Utility.hpp"
 
-
+#include <QColorDialog>
 
 namespace CrystalGUI {
 
+
+FloatSetter::FloatSetter(QGroupBox* parent, QString Name, float min, float max) {
+
+    layout = new QGridLayout;
+
+    qpb = new QPushButton;
+    slider = new QDoubleSlider;
+    spinbox = new QDoubleSpinBox;
+
+    slider->setMinimum((float)min);
+    slider->setMaximum((float)max);
+    spinbox->setMinimum((float)min);
+    spinbox->setMaximum((float)max);
+
+    qpb->setText(Name);
+
+    layout->addWidget(qpb, 0, 0);
+    layout->addWidget(slider, 0, 1);
+    layout->addWidget(spinbox, 0, 2);
+
+    setLayout(layout);
+
+    connect(slider, SIGNAL(valueChanged(double)), spinbox, SLOT(setValue(double)));
+    connect(spinbox, SIGNAL(valueChanged(double)), slider, SLOT(setValue(double)));
+    connect(spinbox, SIGNAL(valueChanged(double)), this, SLOT(slot_valueChanged(double)));
+
+}
+
+FloatSetter::~FloatSetter() {
+    disconnect(slider, 0, 0, 0);
+    disconnect(spinbox, 0, 0, 0);
+}
+
+void FloatSetter::slot_valueChanged(double val) {
+    value = val;
+    emit signal_valueChanged(val);
+}
+
+
+RGBSetter::RGBSetter(QGroupBox* parent, QString Name) {
+
+    layout = new QGridLayout;
+
+    qpb = new QPushButton;
+    qpb->setText(Name);
+
+    frame = new QFrame;
+    frame->setLineWidth(2);
+    frame->setAutoFillBackground(true);
+    frame->setFrameShape(QFrame::Box);
+    
+    layout->addWidget(qpb, 0, 0);
+    layout->addWidget(frame, 0, 1);
+
+    color.setRgb(126, 237, 13);
+    QPalette palette(color);
+    palette.setColor(QPalette::Window, color);
+    frame->setPalette(palette);
+
+    setLayout(layout);
+
+    connect(qpb, SIGNAL(clicked()), this, SLOT(slot_setValue()));
+    
+}
+RGBSetter::~RGBSetter() {
+
+    disconnect(qpb, 0, 0, 0);
+}
+
+void RGBSetter::slot_valueChanged(const QColor& val) {
+    color = val;
+
+    value[0] = 1.0f / 255.0f * val.red();
+    value[1] = 1.0f / 255.0f * val.green();
+    value[2] = 1.0f / 255.0f * val.blue();
+
+    QPalette palette(color);
+    palette.setColor(QPalette::Window, color);
+    frame->setPalette(palette);
+
+    emit signal_valueChanged(color);
+}
+void RGBSetter::slot_setValue() {
+    QColorDialog ColorDialog(color);
+    connect(&ColorDialog, SIGNAL(currentColorChanged(const QColor&)), this, SLOT(slot_valueChanged(const QColor&)));
+    ColorDialog.exec();
+    disconnect(&ColorDialog, SIGNAL(currentColorChanged(const QColor&)), this, SLOT(slot_valueChanged(const QColor&)));
+}
 
 
     /*

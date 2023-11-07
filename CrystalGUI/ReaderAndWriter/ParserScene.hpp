@@ -94,7 +94,12 @@ public:
 	bool readScalarTransFuncNodePropXML(const QDomNodeList& nodes, CrystalAlgrithm::STF_Preset& stf);
 
 	// Writer
-	bool writeSceneXML();
+	bool writeSceneXML(QString folderPath);
+
+	QDomElement getSceneCameraXML();
+	QDomElement getSceneFilmXML();
+	QDomElement getSceneVisualizerXML();
+
 
 	// Inspector
 	bool InspectorScene();

@@ -24,9 +24,92 @@ Github site: <https://github.com/dezeming/Crystal>
 #define __Utility_h__
 #undef _EXPORTING
 
+#include <QGroupBox>
+#include <QPushButton>
+#include "CrystalGUI/Utility/QDoubleSlider.hpp"
+#include <QDoubleSpinBox>
+#include <QGridLayout>
+#include <QFrame>
 
 namespace CrystalGUI {
 
+
+class FloatSetter : public QGroupBox {
+    Q_OBJECT
+public:
+    FloatSetter(QGroupBox* parent, QString Name, float min, float max);
+    ~FloatSetter();
+
+    void setValue(float val) {
+        slider->setValue(val);
+        spinbox->setValue(val);
+        value = val;
+    }
+    void getValue(float& val) {
+        val = value;
+    }
+    
+private:
+    float value;
+
+    QGridLayout* layout;
+
+    QPushButton* qpb;
+    QDoubleSlider* slider;
+    QDoubleSpinBox* spinbox;
+
+signals:
+    void signal_valueChanged(double);
+
+private slots:
+    void slot_valueChanged(double);
+
+};
+
+class RGBSetter : public QGroupBox {
+    Q_OBJECT
+public:
+    RGBSetter(QGroupBox* parent, QString Name);
+    ~RGBSetter();
+
+    void setValue(float val[3]) {
+        value[0] = val[0];
+        value[0] = std::max(std::min(value[0], 1.0f), 0.0f);
+        value[1] = val[1];
+        value[1] = std::max(std::min(value[1], 1.0f), 0.0f);
+        value[2] = val[2];
+        value[2] = std::max(std::min(value[2], 1.0f), 0.0f);
+
+        color.setRed(255.9f * value[0]);
+        color.setGreen(255.9f * value[1]);
+        color.setBlue(255.9f * value[2]);
+
+        QPalette m_palette(color);
+        frame->setPalette(m_palette);
+    }
+    void getValue(float* val) {
+        val[0] = value[0];
+        val[1] = value[1];
+        val[2] = value[2];
+    }
+    
+private:
+    float value[3];
+    QColor color;
+
+    QGridLayout* layout;
+
+    QPushButton* qpb;
+    QFrame* frame;
+
+signals:
+    void signal_valueChanged(const QColor& color);
+
+private slots:
+    void slot_valueChanged(const QColor& color);
+    void slot_setValue();
+
+};
 
 
 

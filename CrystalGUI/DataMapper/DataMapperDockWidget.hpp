@@ -27,11 +27,17 @@
 
 #include <QFrame>
 #include <QGridLayout>
+#include <QHBoxLayout>
+
 #include <QDockWidget>
 #include <QStackedWidget>
 #include <QPushButton>
 
 #include "ScalarTransferFuncGraphicsView.hpp"
+
+namespace CrystalAlgrithm {
+    class ScenePreset;
+}
 
 namespace CrystalGUI {
 
@@ -42,7 +48,7 @@ class DataMapperDockWidget : public QDockWidget
 	Q_OBJECT
 
 public:
-    DataMapperDockWidget(QWidget* pParent = NULL);
+    DataMapperDockWidget(QWidget* pParent, const CrystalAlgrithm::ScenePreset& sp);
 	~DataMapperDockWidget();
 
 protected:
@@ -53,10 +59,14 @@ protected:
     QStackedWidget* stackedWidget;
 
     // Scalar Transfer Function
-    ScalarTransferFuncWidget* STF_Widgets[MaxDataMapperCount];
-    QPushButton* STF_SelectionButton[MaxDataMapperCount];
+    ScalarTransferFuncWidget* STF_Widgets[2];
+    int STF_Widgets_Count;
 
-    void setupWidgets();
+    QPushButton* DataMapper_SelectionButton[MaxDataMapperCount];
+    QHBoxLayout* DataMapper_SelectionButton_Layout;
+    int DataMapper_Button_Used;
+
+    void setupWidgets(const CrystalAlgrithm::ScenePreset& sp);
 
 };
 

@@ -25,6 +25,7 @@
 #include <QString>
 #include <QFileInfo>
 #include <QFile>
+#include <QDir>
 
 #include <QtXml\QtXml>
 #include <QtXml\QDomDocument>
@@ -62,7 +63,7 @@ bool ParserScene::readSceneXML() {
 
 	if (!reader.setContent(&file)) {
 		file.close();
-		Print_Gui_Error("(!reader.setContent(&file))");	
+		Print_Gui_Error("The format of the Scene XML file is incorrect and please check the file");
 		return false;
 	}
 	file.close();
@@ -260,7 +261,7 @@ bool ParserScene::readSceneGeometryXML(const QDomNodeList& nodes) {
 	QDomDocument geoReader;
 	if (!geoReader.setContent(&file)) {	
 		file.close();
-		Print_Gui_Error("(!reader.setContent(&file))");
+		Print_Gui_Error("The format of the Geometry XML file is incorrect and please check the file");
 		return false;
 	}
 	file.close();
@@ -281,6 +282,12 @@ bool ParserScene::readSceneGeometryXML(const QDomNodeList& nodes) {
 
 		if ("MedicalVolumeData" == e.tagName()) {
 			readFlag = readFlag && readMedicalVolumeData(child.childNodes());
+		}
+		else if ("Texture" == e.tagName()) {
+
+		}
+		else if ("Material" == e.tagName()) {
+
 		}
 		else if ("MedicalMeshData" == e.tagName()) {
 			readFlag = readFlag && readMedicalMeshData(child.childNodes());
@@ -322,7 +329,7 @@ bool ParserScene::readSceneDataMapperXML(const QDomNodeList& nodes) {
 	QString DataMapperFilePath = (m_ScenePreset.SceneFileDir + "/" + m_ScenePreset.DataMapperFileName).c_str();
 	QFile file(DataMapperFilePath);
 	if (m_ScenePreset.DataMapperFileName == "") {
-		Print_Gui_Error("No scene ataMapper file");
+		Print_Gui_Error("No scene dataMapper file");
 		return false;
 	}
 	else if (!file.exists()) {
@@ -336,7 +343,7 @@ bool ParserScene::readSceneDataMapperXML(const QDomNodeList& nodes) {
 	QDomDocument mapReader;
 	if (!mapReader.setContent(&file)) {
 		file.close();
-		Print_Gui_Error("(!reader.setContent(&file))");
+		Print_Gui_Error("The format of the DataMapper XML file is incorrect and please check the file");
 		return false;
 	}
 	file.close();
@@ -369,7 +376,75 @@ bool ParserScene::readSceneDataMapperXML(const QDomNodeList& nodes) {
 	return readFlag;
 }
 
-bool ParserScene::writeSceneXML() {
+bool ParserScene::writeSceneXML(QString folderPath) {
+
+	QDir folder(folderPath);
+
+	if (!folder.exists()) {
+		if (!folder.mkpath(".")) {
+			return false;
+		}
+	}
+	QFile sceneFile(folderPath + "/" + "Scene.xml");
+	QFile SceneGeometryFile(folderPath + "/" + "SceneGeometry.xml");
+	QFile DataMapperFile(folderPath + "/" + "DataMapper.xml");
+	if (sceneFile.exists() || SceneGeometryFile.exists() || DataMapperFile.exists())
+		return false;
+
+	if (!sceneFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		return false;
+	}
+	if (!SceneGeometryFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		return false;
+	}
+	if (!DataMapperFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		return false;
+	}
+
+	// write scene file
+
+	writer.clear();
+	QDomProcessingInstruction instruction = writer.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+	writer.appendChild(instruction);
+
+	QDomElement root = writer.documentElement();
+	root = writer.createElement(rootName);
+	writer.appendChild(root);
+
+	root.appendChild(getSceneCameraXML());
+	root.appendChild(getSceneFilmXML());
+	root.appendChild(getSceneVisualizerXML());
+
+	QDomElement SceneGeometryNodeElement = writer.createElement("Film");
+	QDomElement SceneGeometryNode = writer.documentElement();
+	SceneGeometryNode = writer.createElement("GeometryFileName");
+	SceneGeometryNode.setAttribute("file", "SceneGeometry.xml");
+	SceneGeometryNodeElement.appendChild(SceneGeometryNode);
+
+	root.appendChild(SceneGeometryNodeElement);
+
+	QDomElement DataMapperNodeElement = writer.createElement("Film");
+	QDomElement DataMapperNode = writer.documentElement();
+	DataMapperNode = writer.createElement("DataMapperFileName");
+	DataMapperNode.setAttribute("file", "DataMapper.xml");
+	DataMapperNodeElement.appendChild(DataMapperNode);
+
+	root.appendChild(DataMapperNodeElement);
+
+	// output to file
+	QTextStream out_stream(&sceneFile);
+	writer.save(out_stream, 4); //Ëõ½ø4¸ñ
+	sceneFile.close();
+
+	// write sceneGeometry file
+
+
+
+
+	// write data mapper file
+
+
+
 
 	return true;
 }
@@ -401,6 +476,63 @@ std::vector<float> ParserScene::stringToFloatVector(std::string input, std::stri
 
 	return FloatResult;
 }
+
+QDomElement ParserScene::getSceneCameraXML() {
+
+	QDomDocument doc;
+	QDomElement TsNodesElement = doc.createElement("Camera");
+
+	QDomElement CameraTypeElement = doc.documentElement();
+	CameraTypeElement = doc.createElement("CameraType");
+	CameraTypeElement.setAttribute("type", m_ScenePreset.m_CameraPreset.CameraType.c_str());
+
+	QDomElement FovElement = doc.documentElement();
+	FovElement = doc.createElement("Fov");
+	FovElement.setAttribute("Value", m_ScenePreset.m_CameraPreset.fov);
+
+	QDomElement LookAtElement = doc.documentElement();
+	LookAtElement = doc.createElement("LookAt");
+	LookAtElement.setAttribute("from", m_ScenePreset.m_CameraPreset.fromToString().c_str());
+	LookAtElement.setAttribute("to", m_ScenePreset.m_CameraPreset.toToString().c_str());
+
+	TsNodesElement.appendChild(CameraTypeElement);
+	TsNodesElement.appendChild(FovElement);
+	TsNodesElement.appendChild(LookAtElement);
+
+	return TsNodesElement;
+}
+
+QDomElement ParserScene::getSceneFilmXML() {
+
+	QDomDocument doc;
+	QDomElement TsNodesElement = doc.createElement("Film");
+
+	QDomElement FrameBufferSizeElement = doc.documentElement();
+	FrameBufferSizeElement = doc.createElement("FrameBufferSize");
+	FrameBufferSizeElement.setAttribute("width", m_ScenePreset.m_FilmPreset.width);
+	FrameBufferSizeElement.setAttribute("height", m_ScenePreset.m_FilmPreset.height);
+
+	TsNodesElement.appendChild(FrameBufferSizeElement);
+
+	return TsNodesElement;
+}
+
+QDomElement ParserScene::getSceneVisualizerXML() {
+
+	QDomDocument doc;
+	QDomElement TsNodesElement = doc.createElement("Visualizer");
+
+	QDomElement VisualizerElement = doc.documentElement();
+	VisualizerElement = doc.createElement("Visualizer");
+	VisualizerElement.setAttribute("type", m_ScenePreset.m_VisualizerPreset.VisualizerType.c_str());
+
+	TsNodesElement.appendChild(VisualizerElement);
+
+	return TsNodesElement;
+
+}
+
+
 
 
 }

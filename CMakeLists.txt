@@ -295,6 +295,10 @@ set(Utility
 	CrystalGUI/Utility/Common.hpp
 	CrystalGUI/Utility/Status.hpp
 	CrystalGUI/Utility/Status.cpp
+	CrystalGUI/Utility/QDoubleSlider.hpp
+	CrystalGUI/Utility/QDoubleSlider.cpp
+	CrystalGUI/Utility/QSliderDoubleRange.hpp
+	CrystalGUI/Utility/QSliderDoubleRange.cpp
 )
 # Make the Utility group
 SOURCE_GROUP("Utility" FILES ${Utility})
