@@ -58,6 +58,8 @@ inline QString obtainFileNameFromFilePath(QString filepath) {
 	return fileDir;
 }
 
+std::vector<float> stringToFloatVector(std::string input, std::string separator = ",");
+std::vector<unsigned int> stringToUIntVector(std::string input, std::string separator = ",");
 
 class ParserScene : public QObject {
 	Q_OBJECT
@@ -107,8 +109,6 @@ public:
 	CrystalAlgrithm::ScenePreset m_ScenePreset;
 
 private:
-	
-	std::vector<float> stringToFloatVector(std::string input, std::string separator = ",");
 
 	QDomDocument reader;
 	QDomDocument writer;

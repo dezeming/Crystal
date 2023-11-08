@@ -156,6 +156,7 @@ bool ParserScene::readSceneCameraXML(const QDomNodeList& nodes) {
 			std::vector<float> fromValue = stringToFloatVector(from, ",");
 			if (fromValue.size() != 3) {
 				readFlag = false;
+				Print_Gui_Error("Incorrect number of data loads");
 				break;
 			}
 			else {
@@ -167,6 +168,7 @@ bool ParserScene::readSceneCameraXML(const QDomNodeList& nodes) {
 			std::vector<float> toValue = stringToFloatVector(to, ",");
 			if (toValue.size() != 3) {
 				readFlag = false;
+				Print_Gui_Error("Incorrect number of data loads");
 				break;
 			}
 			else {
@@ -450,7 +452,7 @@ bool ParserScene::writeSceneXML(QString folderPath) {
 }
 
 
-std::vector<float> ParserScene::stringToFloatVector(std::string input, std::string separator) {
+std::vector<float> stringToFloatVector(std::string input, std::string separator) {
 	std::vector<std::string> Result;
 	std::vector<float> FloatResult;
 
@@ -477,6 +479,34 @@ std::vector<float> ParserScene::stringToFloatVector(std::string input, std::stri
 	return FloatResult;
 }
 
+std::vector<unsigned int> stringToUIntVector(std::string input, std::string separator) {
+
+	std::vector<std::string> Result;
+	std::vector<unsigned int> UIntResult;
+
+	std::istringstream ss(input);
+	std::string token;
+	while (std::getline(ss, token, ',')) {
+		Result.push_back(token);
+	}
+	if (Result.size() != 3) return UIntResult;
+
+	for (int i = 0; i < 3; i++) {
+		try {
+			float floatValue = std::stof(Result[i]);
+			UIntResult.push_back(floatValue);
+		}
+		catch (const std::invalid_argument& e) {
+			Print_Gui_Error("invalid argument for converting string into float value");
+		}
+		catch (const std::out_of_range& e) {
+			Print_Gui_Error("conversion exceeds the representable range of data");
+		}
+	}
+
+	return UIntResult;
+}
+
 QDomElement ParserScene::getSceneCameraXML() {
 
 	QDomDocument doc;
@@ -492,8 +522,8 @@ QDomElement ParserScene::getSceneCameraXML() {
 
 	QDomElement LookAtElement = doc.documentElement();
 	LookAtElement = doc.createElement("LookAt");
-	LookAtElement.setAttribute("from", m_ScenePreset.m_CameraPreset.fromToString().c_str());
-	LookAtElement.setAttribute("to", m_ScenePreset.m_CameraPreset.toToString().c_str());
+	LookAtElement.setAttribute("from", CrystalAlgrithm::Point3fToString(m_ScenePreset.m_CameraPreset.lookatFrom).c_str());
+	LookAtElement.setAttribute("to", CrystalAlgrithm::Point3fToString(m_ScenePreset.m_CameraPreset.lookatTo).c_str());
 
 	TsNodesElement.appendChild(CameraTypeElement);
 	TsNodesElement.appendChild(FovElement);

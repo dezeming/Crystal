@@ -218,8 +218,11 @@ public:
 
 typedef Vector2<float> Vector2f;
 typedef Vector2<int> Vector2i;
+typedef Vector2<unsigned int> Vector2ui;
+
 typedef Vector3<float> Vector3f;
 typedef Vector3<int> Vector3i;
+typedef Vector3<unsigned int> Vector3ui;
 
 // Point Declarations
 template <typename T>

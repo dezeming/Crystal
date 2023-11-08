@@ -33,6 +33,16 @@ namespace CrystalAlgrithm{
 
 /****** Basic ******/ 
 
+inline std::string Point3fToString(const Point3f& pot) {
+	return std::to_string(pot[0]) + "," + std::to_string(pot[1]) + "," + std::to_string(pot[2]);
+}
+inline std::string Vector3fToString(const Vector3f& vec) {
+	return std::to_string(vec[0]) + "," + std::to_string(vec[1]) + "," + std::to_string(vec[2]);
+}
+inline std::string Vector3uiToString(const Vector3ui& vec) {
+	return std::to_string(vec[0]) + "," + std::to_string(vec[1]) + "," + std::to_string(vec[2]);
+}
+
 class CameraPreset {
 public:
 	CameraPreset() {
@@ -59,16 +69,11 @@ public:
 		return "CameraPreset: "
 			"  CameraType:[" + CameraType + "]" + 
 			"  fov:[" + std::to_string(fov) + "]" +
-			" LookAt:from[" + fromToString() + "]" +
-			"to[" + toToString() +"]";
+			" LookAt:from[" + Point3fToString(lookatFrom) + "]" +
+			"to[" + Point3fToString(lookatTo) +"]";
 	}
 
-	std::string fromToString() {
-		return std::to_string(lookatFrom[0]) + "," + std::to_string(lookatFrom[1]) + "," + std::to_string(lookatFrom[2]);
-	}
-	std::string toToString() {
-		return std::to_string(lookatTo[0]) + "," + std::to_string(lookatTo[1]) + "," + std::to_string(lookatTo[2]);
-	}
+
 };
 
 class FilmPreset {
@@ -134,7 +139,7 @@ public:
 
 	}
 	bool isValid() {
-
+		return true;
 	}
 	std::string ToString() {
 
@@ -159,6 +164,7 @@ public:
 	}
 	bool isValid() {
 
+		return true;
 	}
 	std::string ToString() {
 
@@ -182,14 +188,64 @@ public:
 	}
 
 	void reset() {
+		datatype = "";
+		structure = "";
+		datatype = "";
+		resolution = Vector3ui(0, 0, 0);
+		pixelSpacing = Vector3f(0.0f, 0.0f, 0.0f);
+		permute = Vector3ui(0, 1, 2);
 
+		RotateXY = Vector2f(0.0f,0.0f);
+		Translate_V = Vector3f(0.0f, 0.0f, 0.0f);
+
+		RotateX = GetIdentityTransform();
+		RotateY = RotateX;
+		Translate = RotateX;
 	}
+
+	bool loadAndInit() {
+
+		return true;
+	}
+
 	bool isValid() {
+		if ("raw" != datatype) return false;
+		if ("short" != datatype) return false;
+		if ("Texture3D" != structure) return false;
+		if (resolution.x == 0 || resolution.y == 0 || resolution.z == 0) return false;
+		if (pixelSpacing.x == 0.f || pixelSpacing.y == 0.f || pixelSpacing.z == 0.f) return false;
 
+		if (permute.x == permute.y || permute.y == permute.z || permute.x == permute.z) return false;
+		if (permute.x > 2 || permute.y > 2 || permute.z > 2) return false;
+
+		return true;
 	}
+
+	std::string dataFileType;
+	std::string dataFilePath;
+
+	std::string datatype;
+
+	Vector3ui resolution;
+	Vector3f pixelSpacing;
+
+	Vector3ui permute;
+
+	Vector2f RotateXY;
+	Vector3f Translate_V;
+	Transform RotateX, RotateY, Translate;
+
+	std::string structure;
+
 	std::string ToString() {
 
-		return "";
+		return "MedicalVolumeDataPreset" 
+			" dataFileType:[" + dataFileType + "]"
+			" dataFilePath:[" + dataFilePath + "]"
+			" datatype:[" + datatype + "]"
+			" resolution:[" + Vector3uiToString(resolution) + "]"
+			" pixelSpacing:[" + Vector3fToString(pixelSpacing) + "]"
+			" structure:[" + structure + "]";
 	}
 };
 
@@ -203,7 +259,7 @@ public:
 
 	}
 	bool isValid() {
-
+		return true;
 	}
 	std::string ToString() {
 
@@ -221,7 +277,7 @@ public:
 
 	}
 	bool isValid() {
-
+		return true;
 	}
 	std::string ToString() {
 
@@ -241,7 +297,7 @@ public:
 
 	}
 	bool isValid() {
-
+		return true;
 	}
 	std::string ToString() {
 
@@ -259,7 +315,7 @@ public:
 
 	}
 	bool isValid() {
-
+		return true;
 	}
 	std::string ToString() {
 
@@ -277,7 +333,7 @@ public:
 
 	}
 	bool isValid() {
-
+		return true;
 	}
 
 	std::string ToString() {

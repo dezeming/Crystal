@@ -15,19 +15,22 @@
 	<Material name="mat001" type="lambertian" diffTex="tex001" />
 	<Material name="mat002" type="alpha" alphaTex="tex001" />
 	<MedicalMeshData>
-		<Mesh path="" mat="" /> 
-		<Mesh path="" mat="" />
+		<File path="" />
+		<Material mat="" />
+		<Transform>
+			<Scale X="1.0" Y="1.0" Z="1.0" />
+			<Rotate Axis="0,1,0" Angle="0" />
+			<Translate X="0.0" Y="0.0" Z="0.0" />
+		</Transform>
 	</MedicalMeshData>
 	<EnvironmentMesh>
-		<Mesh> 
-			<File path="" />
-			<Material mat="" />
-			<Transform>
-				<Scale X="1.0" Y="1.0" Z="1.0" />
-				<Rotate Axis="0,1,0" Angle="0" />
-				<Translate X="0.0" Y="0.0" Z="0.0" />
-			</Transform>
-		</Mesh>
+		<File path="" />
+		<Material mat="" />
+		<Transform>
+			<Scale X="1.0" Y="1.0" Z="1.0" />
+			<Rotate Axis="0,1,0" Angle="0" />
+			<Translate X="0.0" Y="0.0" Z="0.0" />
+		</Transform>
 	</EnvironmentMesh>
 	<Light>
 		<PointLight>

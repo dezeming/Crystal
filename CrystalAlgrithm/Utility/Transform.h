@@ -197,6 +197,16 @@ HOST_AND_DEVICE inline Matrix4x4 Transpose(const Matrix4x4& m) {
 		m.m[3][3]);
 }
 
+HOST_AND_DEVICE inline Transform GetIdentityTransform() {
+	Matrix4x4 m(
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 1.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+
+	return Transform(m);
+}
+
 HOST_AND_DEVICE inline Matrix4x4 Inverse(const Matrix4x4& m, bool& flag) {
 	int indxc[4], indxr[4];
 	int ipiv[4] = { 0, 0, 0, 0 };
