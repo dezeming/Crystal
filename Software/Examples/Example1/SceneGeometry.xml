@@ -1,6 +1,6 @@
 <SceneGeometry>
 	<MedicalVolumeData> 
-		<DataFile type="raw" path="D:/Dataset/Volume/test.raw" datatype="short"/>
+		<DataFile type="raw" pathType="Relative" path="D:/Dataset/Volume/test.raw" datatype="short"/>
 		<DataDim Resolution="512,512,460" PixelSpacing="0.976562,0.976562,1.4" />
 		<Transform>
 			<Permute Axis="0,1,2" />
@@ -10,11 +10,11 @@
 		<Structure type="Texture3D" />
 	</MedicalVolumeData>
 	<Texture name="tex001" type="constant" albedo="0.6,0.6,0.6" />
-	<Texture name="tex002" type="image" path="D:/" />
+	<Texture name="tex002" type="image" pathType="Relative" path="D:/" />
 	<Material name="mat001" type="lambertian" diffTex="tex001" />
 	<Material name="mat002" type="alpha" alphaTex="tex001" />
 	<MedicalMeshData>
-		<File path="" />
+		<File pathType="Relative" path="" />
 		<Material mat="" />
 		<Transform>
 			<Scale X="1.0" Y="1.0" Z="1.0" />
@@ -23,7 +23,7 @@
 		</Transform>
 	</MedicalMeshData>
 	<EnvironmentMesh>
-		<File path="" />
+		<File pathType="Relative" path="" />
 		<Material mat="" />
 		<Transform>
 			<Scale X="1.0" Y="1.0" Z="1.0" />
@@ -47,7 +47,7 @@
 			<Radiance R="1.0" G="1.0" B="1.0" scale="1.0" />		
 		</QuadAreaLight>
 		<HdrEnvironmentLight>
-			<File path="" />
+			<File pathType="Relative" path="" />
 			<Scale value="1.0" />
 			<Resolution width="2000" height="1000" />
 			<RotateXY X="0" Y="30" />

@@ -59,4 +59,48 @@
 			</Node>
 		</NodesPropertiesArray>
 	</ScalarTransferFunction>
+	<ScalarTransferFunction>
+		<Type value="Mask" />
+		<GlobalProperties>
+		</GlobalProperties>
+		<OneNodeProperties>
+			<Opacity components="1" type="float" RangeBtn="0" RangeTop="1.0" />
+		</OneNodeProperties>
+		<NodesPropertiesArray>
+			<Node>
+				<NormalizedIntensity value="0"/>
+				<Opacity value="1.0"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="0.23597"/>
+				<Opacity value="1.0"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="1"/>
+				<Opacity value="1.0"/>
+			</Node>
+		</NodesPropertiesArray>
+	</ScalarTransferFunction>
+	<ScalarTransferFunction>
+		<Type value="Mask" />
+		<GlobalProperties>
+		</GlobalProperties>
+		<OneNodeProperties>
+			<Opacity components="1" type="float" RangeBtn="0" RangeTop="1.0" />
+		</OneNodeProperties>
+		<NodesPropertiesArray>
+			<Node>
+				<NormalizedIntensity value="0"/>
+				<Opacity value="1.0"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="0.23597"/>
+				<Opacity value="1.0"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="1"/>
+				<Opacity value="1.0"/>
+			</Node>
+		</NodesPropertiesArray>
+	</ScalarTransferFunction>
 </DataMapper>
