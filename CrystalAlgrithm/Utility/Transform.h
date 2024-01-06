@@ -17,8 +17,8 @@
     Github site: <https://github.com/dezeming/Crystal>
 */
 
-#ifndef __Transform_h__
-#define __Transform_h__
+#ifndef __algrithm_Transform_h__
+#define __algrithm_Transform_h__
 
 #include "CrystalAlgrithm/Utility/cuda_Common.cuh"
 
@@ -131,6 +131,10 @@ public:
 
 	HOST_AND_DEVICE inline Vector3f operator()(const Vector3f& v) const;
 
+	HOST_AND_DEVICE inline CameraRay operator()(const CameraRay& r) const;
+	HOST_AND_DEVICE inline CameraRayDifferential operator()(const CameraRayDifferential& r) const;
+	HOST_AND_DEVICE Bounds3f operator()(const Bounds3f& b) const;
+
 	HOST_AND_DEVICE inline Normal3f operator()(const Normal3f&) const;
 	HOST_AND_DEVICE Transform operator*(const Transform& t2) const;
 private:
@@ -164,6 +168,38 @@ HOST_AND_DEVICE inline Point3f Transform::operator()(const Point3f& pt) const {
 		return Point3f(xp, yp, zp);
 	else
 		return Point3f(xp, yp, zp) / wp;
+}
+
+HOST_AND_DEVICE inline CameraRay Transform::operator()(const CameraRay& r) const {
+	Vector3f oError;
+	Point3f o = (*this)(r.origin);
+	Vector3f d = (*this)(r.direction);
+	float tMax = r.tmax;
+	return CameraRay(o, d, tMax, r.isInVolume);
+}
+
+HOST_AND_DEVICE inline CameraRayDifferential Transform::operator()(const CameraRayDifferential& r) const {
+	CameraRay tr = (*this)(CameraRay(r));
+	CameraRayDifferential ret(tr.origin, tr.direction, tr.tmax, tr.isInVolume);
+	ret.hasDifferentials = r.hasDifferentials;
+	ret.rxOrigin = (*this)(r.rxOrigin);
+	ret.ryOrigin = (*this)(r.ryOrigin);
+	ret.rxDirection = (*this)(r.rxDirection);
+	ret.ryDirection = (*this)(r.ryDirection);
+	return ret;
+}
+
+HOST_AND_DEVICE inline Bounds3f Transform::operator()(const Bounds3f& b) const {
+	const Transform& M = *this;
+	Bounds3f ret(M(Point3f(b.pMin.x, b.pMin.y, b.pMin.z)));
+	ret = Union(ret, M(Point3f(b.pMax.x, b.pMin.y, b.pMin.z)));
+	ret = Union(ret, M(Point3f(b.pMin.x, b.pMax.y, b.pMin.z)));
+	ret = Union(ret, M(Point3f(b.pMin.x, b.pMin.y, b.pMax.z)));
+	ret = Union(ret, M(Point3f(b.pMin.x, b.pMax.y, b.pMax.z)));
+	ret = Union(ret, M(Point3f(b.pMax.x, b.pMax.y, b.pMin.z)));
+	ret = Union(ret, M(Point3f(b.pMax.x, b.pMin.y, b.pMax.z)));
+	ret = Union(ret, M(Point3f(b.pMax.x, b.pMax.y, b.pMax.z)));
+	return ret;
 }
 
 HOST_AND_DEVICE inline Matrix4x4::Matrix4x4(float mat[4][4]) { memcpy(m, mat, 16 * sizeof(float)); }

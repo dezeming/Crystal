@@ -41,6 +41,7 @@ namespace CrystalAlgrithm {
 
 namespace CrystalGUI {
 
+const int MaxSTFCount = 4;
 const int MaxDataMapperCount = 5;
 
 class DataMapperDockWidget : public QDockWidget
@@ -48,7 +49,7 @@ class DataMapperDockWidget : public QDockWidget
 	Q_OBJECT
 
 public:
-    DataMapperDockWidget(QWidget* pParent, const CrystalAlgrithm::ScenePreset& sp);
+    DataMapperDockWidget(QWidget* pParent, CrystalAlgrithm::ScenePreset& sp);
 	~DataMapperDockWidget();
 
 protected:
@@ -59,14 +60,14 @@ protected:
     QStackedWidget* stackedWidget;
 
     // Scalar Transfer Function
-    ScalarTransferFuncWidget* STF_Widgets[2];
+    ScalarTransferFuncWidget* STF_Widgets[MaxSTFCount];
     int STF_Widgets_Count;
 
     QPushButton* DataMapper_SelectionButton[MaxDataMapperCount];
-    QHBoxLayout* DataMapper_SelectionButton_Layout;
+    QGridLayout* DataMapper_SelectionButton_Layout;
     int DataMapper_Button_Used;
 
-    void setupWidgets(const CrystalAlgrithm::ScenePreset& sp);
+    void setupWidgets(CrystalAlgrithm::ScenePreset& sp);
 
 };
 

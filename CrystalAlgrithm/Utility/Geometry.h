@@ -17,10 +17,42 @@
     Github site: <https://github.com/dezeming/Crystal>
 */
 
-#ifndef __Geometry_h__
-#define __Geometry_h__
+/*
+    pbrt source code is Copyright(c) 1998-2016
+                        Matt Pharr, Greg Humphreys, and Wenzel Jakob.
+
+    This file is part of pbrt.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+    - Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    - Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+    IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+    TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+    PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ */
+
+#ifndef __algrithm_Geometry_h__
+#define __algrithm_Geometry_h__
 
 #include "CrystalAlgrithm/Utility/cuda_Common.cuh"
+#include "CrystalAlgrithm/Utility/Common.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -40,14 +72,6 @@ class Point2;
 template <typename T>
 class Normal3;
 
-template <typename T>
-HOST_AND_DEVICE inline bool isNaN(const T x) {
-    return std::isnan(x);
-}
-template <>
-HOST_AND_DEVICE inline bool isNaN(const int x) {
-    return false;
-}
 
 // Vector Declarations
 template <typename T>
@@ -56,7 +80,7 @@ public:
     // Vector2 Public Methods
     HOST_AND_DEVICE Vector2() { x = y = 0; }
     HOST_AND_DEVICE Vector2(T xx, T yy) : x(xx), y(yy) { DCHECK(!HasNaNs()); }
-    HOST_AND_DEVICE bool HasNaNs() const { return isNaN(x) || isNaN(y); }
+    HOST_AND_DEVICE bool HasNaNs_host() const { return isNaN(x) || isNaN(y); }
     HOST_AND_DEVICE explicit Vector2(const Point2<T>& p);
     HOST_AND_DEVICE explicit Vector2(const Point3<T>& p);
 
@@ -843,6 +867,248 @@ HOST_AND_DEVICE inline Vector3<T> Faceforward(const Vector3<T>& v, const Normal3
 template <typename T>
 HOST_AND_DEVICE Normal3<T> Abs(const Normal3<T>& v) {
     return Normal3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
+}
+
+class EXPORT_DLL CameraRay {
+public:
+    // CameraRay
+    HOST_AND_DEVICE CameraRay(
+        const Point3f& o, 
+        const Vector3f& d, 
+        float tMax = Infinity,
+        bool inVol = false) {
+        origin = o;
+        direction = d;
+        tmax = tMax;
+        isInVolume = inVol;
+    }
+    HOST_AND_DEVICE ~CameraRay() {
+
+    }
+    HOST_AND_DEVICE Point3f operator()(float t) const { return origin + direction * t; }
+    HOST_AND_DEVICE bool HasNaNs() const { return (origin.HasNaNs() || direction.HasNaNs() || isNaN(tmax)); }
+
+    Point3f origin;
+    Vector3f direction;
+    float tmax;
+    bool isInVolume;
+};
+
+class EXPORT_DLL CameraRayDifferential : public CameraRay {
+public:
+    // CameraRayDifferential
+    HOST_AND_DEVICE CameraRayDifferential(const Point3f& o,
+        const Vector3f& d,
+        float tMax = Infinity,
+        bool inVol = false) : CameraRay(o, d, tMax, inVol){
+
+    }
+    HOST_AND_DEVICE ~CameraRayDifferential() {
+
+    }
+
+    bool hasDifferentials;
+    Point3f rxOrigin, ryOrigin;
+    Vector3f rxDirection, ryDirection;
+};
+
+
+template <typename T>
+class EXPORT_DLL Bounds3 {
+public:
+    // Bounds3 Public Methods
+    HOST_AND_DEVICE Bounds3() {
+        T minNum = std::numeric_limits<T>::lowest();
+        T maxNum = std::numeric_limits<T>::max();
+        pMin = Point3<T>(maxNum, maxNum, maxNum);
+        pMax = Point3<T>(minNum, minNum, minNum);
+    }
+    HOST_AND_DEVICE explicit Bounds3(const Point3<T>& p) : pMin(p), pMax(p) {}
+    HOST_AND_DEVICE Bounds3(const Point3<T>& p1, const Point3<T>& p2)
+        : pMin(std::min(p1.x, p2.x), std::min(p1.y, p2.y),
+            std::min(p1.z, p2.z)),
+        pMax(std::max(p1.x, p2.x), std::max(p1.y, p2.y),
+            std::max(p1.z, p2.z)) {}
+    HOST_AND_DEVICE bool operator==(const Bounds3<T>& b) const {
+        return b.pMin == pMin && b.pMax == pMax;
+    }
+    HOST_AND_DEVICE bool operator!=(const Bounds3<T>& b) const {
+        return b.pMin != pMin || b.pMax != pMax;
+    }
+    HOST_AND_DEVICE Vector3<T> Diagonal() const { return pMax - pMin; }
+    HOST_AND_DEVICE T SurfaceArea() const {
+        Vector3<T> d = Diagonal();
+        return 2 * (d.x * d.y + d.x * d.z + d.y * d.z);
+    }
+    HOST_AND_DEVICE T Volume() const {
+        Vector3<T> d = Diagonal();
+        return d.x * d.y * d.z;
+    }
+    HOST_AND_DEVICE int MaximumExtent() const {
+        Vector3<T> d = Diagonal();
+        if (d.x > d.y && d.x > d.z)
+            return 0;
+        else if (d.y > d.z)
+            return 1;
+        else
+            return 2;
+    }
+    HOST_AND_DEVICE Point3<T> Lerp(const Point3f& t) const {
+        return Point3<T>(CrystalAlgrithm::Lerp(t.x, pMin.x, pMax.x),
+            CrystalAlgrithm::Lerp(t.y, pMin.y, pMax.y),
+            CrystalAlgrithm::Lerp(t.z, pMin.z, pMax.z));
+    }
+    HOST_AND_DEVICE Vector3<T> Offset(const Point3<T>& p) const {
+        Vector3<T> o = p - pMin;
+        if (pMax.x > pMin.x) o.x /= pMax.x - pMin.x;
+        if (pMax.y > pMin.y) o.y /= pMax.y - pMin.y;
+        if (pMax.z > pMin.z) o.z /= pMax.z - pMin.z;
+        return o;
+    }
+    HOST_AND_DEVICE void BoundingSphere(Point3<T>* center, float* radius) const {
+        *center = (pMin + pMax) / 2;
+        *radius = Inside(*center, *this) ? Distance(*center, pMax) : 0;
+    }
+    template <typename U>
+    HOST_AND_DEVICE explicit operator Bounds3<U>() const {
+        return Bounds3<U>((Point3<U>)pMin, (Point3<U>)pMax);
+    }
+
+    HOST_AND_DEVICE bool IntersectP(
+        const CameraRay& ray, float* hitt0 = nullptr, float* hitt1 = nullptr) const
+    {
+        float t0 = 0, t1 = ray.tmax;
+        for (int i = 0; i < 3; ++i) {
+            // Update interval for _i_th bounding box slab
+            float invRayDir = 1 / ray.direction[i];
+            float tNear = (pMin[i] - ray.origin[i]) * invRayDir;
+            float tFar = (pMax[i] - ray.origin[i]) * invRayDir;
+
+            if (tNear > tFar) std::swap(tNear, tFar);
+
+            t0 = tNear > t0 ? tNear : t0;
+            t1 = tFar < t1 ? tFar : t1;
+            if (t0 > t1) return false;
+        }
+        if (hitt0) *hitt0 = t0;
+        if (hitt1) *hitt1 = t1;
+        return true;
+    }
+
+    HOST_AND_DEVICE bool IntersectP(
+        const CameraRay& ray, const Vector3f& invDir, const int* dirIsNeg) const
+    {
+        const Bounds3<T>& bounds = *this;
+        // Check for ray intersection against $x$ and $y$ slabs
+        float tMin = (bounds[dirIsNeg[0]].x - ray.origin.x) * invDir.x;
+        float tMax = (bounds[1 - dirIsNeg[0]].x - ray.origin.x) * invDir.x;
+        float tyMin = (bounds[dirIsNeg[1]].y - ray.origin.y) * invDir.y;
+        float tyMax = (bounds[1 - dirIsNeg[1]].y - ray.origin.y) * invDir.y;
+
+        // Update _tMax_ and _tyMax_ to ensure robust bounds intersection
+        if (tMin > tyMax || tyMin > tMax) return false;
+        if (tyMin > tMin) tMin = tyMin;
+        if (tyMax < tMax) tMax = tyMax;
+
+        // Check for ray intersection against $z$ slab
+        float tzMin = (bounds[dirIsNeg[2]].z - ray.origin.z) * invDir.z;
+        float tzMax = (bounds[1 - dirIsNeg[2]].z - ray.origin.z) * invDir.z;
+
+        // Update _tzMax_ to ensure robust bounds intersection
+        if (tMin > tzMax || tzMin > tMax) return false;
+        if (tzMin > tMin) tMin = tzMin;
+        if (tzMax < tMax) tMax = tzMax;
+
+        return tMax > 0;
+    }
+
+    inline const Point3<T>& operator[](int i) const {
+        DCHECK(i == 0 || i == 1);
+        return (i == 0) ? pMin : pMax;
+    }
+
+    // Bounds3 Public Data
+    Point3<T> pMin, pMax;
+};
+
+typedef Bounds3<float> Bounds3f;
+typedef Bounds3<int> Bounds3i;
+
+class EXPORT_DLL BoundsVolume : public Bounds3<float> {
+public:
+    float NormalizedIntensityMin, NormalizedIntensityMax;
+    float NormalizedGradientMin, NormalizedGradientMax;
+    float NormalizedMaskMin, NormalizedMaskMax;
+    bool hasShadingEvent;
+};
+
+template <typename T>
+HOST_AND_DEVICE Bounds3<T> Union(const Bounds3<T>& b, const Point3<T>& p) {
+    Bounds3<T> ret;
+    ret.pMin = Min(b.pMin, p);
+    ret.pMax = Max(b.pMax, p);
+    return ret;
+}
+
+template <typename T>
+HOST_AND_DEVICE Bounds3<T> Union(const Bounds3<T>& b1, const Bounds3<T>& b2) {
+    Bounds3<T> ret;
+    ret.pMin = Min(b1.pMin, b2.pMin);
+    ret.pMax = Max(b1.pMax, b2.pMax);
+    return ret;
+}
+
+template <typename T>
+HOST_AND_DEVICE Bounds3<T> Intersect(const Bounds3<T>& b1, const Bounds3<T>& b2) {
+    // Important: assign to pMin/pMax directly and don't run the Bounds2()
+    // constructor, since it takes min/max of the points passed to it.  In
+    // turn, that breaks returning an invalid bound for the case where we
+    // intersect non-overlapping bounds (as we'd like to happen).
+    Bounds3<T> ret;
+    ret.pMin = Max(b1.pMin, b2.pMin);
+    ret.pMax = Min(b1.pMax, b2.pMax);
+    return ret;
+}
+
+template <typename T>
+HOST_AND_DEVICE bool Overlaps(const Bounds3<T>& b1, const Bounds3<T>& b2) {
+    bool x = (b1.pMax.x >= b2.pMin.x) && (b1.pMin.x <= b2.pMax.x);
+    bool y = (b1.pMax.y >= b2.pMin.y) && (b1.pMin.y <= b2.pMax.y);
+    bool z = (b1.pMax.z >= b2.pMin.z) && (b1.pMin.z <= b2.pMax.z);
+    return (x && y && z);
+}
+
+template <typename T>
+HOST_AND_DEVICE bool Inside(const Point3<T>& p, const Bounds3<T>& b) {
+    return (p.x >= b.pMin.x && p.x <= b.pMax.x && p.y >= b.pMin.y &&
+        p.y <= b.pMax.y && p.z >= b.pMin.z && p.z <= b.pMax.z);
+}
+
+template <typename T>
+HOST_AND_DEVICE bool InsideExclusive(const Point3<T>& p, const Bounds3<T>& b) {
+    return (p.x >= b.pMin.x && p.x < b.pMax.x&& p.y >= b.pMin.y &&
+        p.y < b.pMax.y&& p.z >= b.pMin.z && p.z < b.pMax.z);
+}
+
+template <typename T, typename U>
+HOST_AND_DEVICE inline Bounds3<T> Expand(const Bounds3<T>& b, U delta) {
+    return Bounds3<T>(b.pMin - Vector3<T>(delta, delta, delta),
+        b.pMax + Vector3<T>(delta, delta, delta));
+}
+
+// Minimum squared distance from point to box; returns zero if point is
+// inside.
+template <typename T, typename U>
+HOST_AND_DEVICE inline float DistanceSquared(const Point3<T>& p, const Bounds3<U>& b) {
+    float dx = std::max({ float(0), b.pMin.x - p.x, p.x - b.pMax.x });
+    float dy = std::max({ float(0), b.pMin.y - p.y, p.y - b.pMax.y });
+    float dz = std::max({ float(0), b.pMin.z - p.z, p.z - b.pMax.z });
+    return dx * dx + dy * dy + dz * dz;
+}
+
+template <typename T, typename U>
+HOST_AND_DEVICE inline float Distance(const Point3<T>& p, const Bounds3<U>& b) {
+    return std::sqrt(DistanceSquared(p, b));
 }
 
 

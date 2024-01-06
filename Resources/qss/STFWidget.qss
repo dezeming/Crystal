@@ -1,0 +1,21 @@
+QGroupBox { 
+	border: 1px solid gray;
+	border-radius: 3px;
+	margin-top: 20px;
+} 
+QGroupBox::title { 
+	subcontrol-origin: margin; 
+	subcontrol-position: top center; 
+	padding: 0 3px; 
+	color: white; 
+	background-color: transparent;
+}
+
+QVBoxLayout {
+	spacing: -30px;
+}
+
+
+
+
+

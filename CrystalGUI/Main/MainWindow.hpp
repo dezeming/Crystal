@@ -35,6 +35,10 @@
 
 #include "CrystalGUI/ReaderAndWriter/ParserScene.hpp"
 
+namespace CrystalAlgrithm {
+    class Scene;
+}
+
 namespace CrystalGUI{
 
 class DisplayWidget;
@@ -64,6 +68,7 @@ protected:
     void closeEvent(QCloseEvent* e);
 
     ParserScene parser;
+    CrystalAlgrithm::Scene* m_Scene;
 
 private:
     void setupMenu(void);

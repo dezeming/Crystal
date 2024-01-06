@@ -18,7 +18,7 @@
 */
 
 #include "cuda_common.cuh"
-#include "cpu_Common.hpp"
+#include "Common.hpp"
 
 #include <cuda.h>
 #include <cuda_runtime.h>

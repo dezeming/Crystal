@@ -18,13 +18,94 @@
 */
 
 
-#ifndef __Scene_h__
-#define __Scene_h__
+#ifndef __algrithm_Scene_h__
+#define __algrithm_Scene_h__
+
+#include "CrystalAlgrithm/Camera/Camera.h"
+
+#include "CrystalAlgrithm/Shape/Primitive.h"
+
+#include "CrystalAlgrithm/Visualizer/Visualizer.h"
+
+#include "CrystalAlgrithm/Material/Texture.h"
+#include "CrystalAlgrithm/Material/Material.h"
+
+#include "CrystalAlgrithm/Shape/bvhTree.h"
+
+#include "CrystalAlgrithm/Volume/Texture3DVolume.h"
+#include "CrystalAlgrithm/Volume/OctreeVolume.h"
+
+#include "CrystalAlgrithm/DataMapper/STF.h"
+
+#include <memory>
+
+namespace CrystalAlgrithm {
+
+class ScenePreset;
+
+class EXPORT_DLL Scene {
+public:
+    Scene();
+    ~Scene();
+
+    // Init Scene
+    bool initScene(const ScenePreset& m_ScenePreset);
+
+    bool initSceneCamera(const ScenePreset& m_ScenePreset);
+
+    bool initSceneFilm(const ScenePreset& m_ScenePreset);
+
+    bool initSceneVisualizer(const ScenePreset& m_ScenePreset);
+
+    bool initSceneGeometry(const ScenePreset& m_ScenePreset);
+    bool initMedicalVolumeData(const ScenePreset& m_ScenePreset);
+    bool initMedicalMeshData(const ScenePreset& m_ScenePreset);
+    bool initEnvironmentMeshData(const ScenePreset& m_ScenePreset);
+    bool initLightData(const ScenePreset& m_ScenePreset);
+
+    bool initSTF(const ScenePreset& m_ScenePreset);
 
 
-class Scene {
+    // shape
+    NonLuminousPrimitiveTable nlTable;
+    LightPrimitiveTable lTable;
+    MedicalPrimitiveTable mTable;
+
+    // accelerator
+    BVHTree nlTree;
+    BVHTree lTree;
+    BVHTree mTree;
+    Bounds3f volumeObjBound;
+
+    // Textures
+    TextureManager textureManager;
+
+    // Materials
+    MaterialManager materialManager;
+
+    // DataMapper
+    bool hasIntensitySTF, hasGradientMagnitudeSTF, hasMaskSTF1, hasMaskSTF2;
+    STF intensitySTF;
+    STF gradientMagnitudeSTF;
+    STF maskSTF[2];
+
+    // Volume
+    unsigned int volType;
+    Texture3DVolume tex3dVolume;
+    OctreeVolume octVolume;
+
+    // Camera
+    unsigned int camType;
+    Camera camera;
+
+    // Film
+    Film film;
 
 };
+
+
+
+}
 
 #endif
 

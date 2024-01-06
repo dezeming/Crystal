@@ -26,16 +26,56 @@
 #include <QGraphicsOpacityEffect>
 #include <QFile>
 
+#include <QElapsedTimer>
+
 #include "CrystalGUI/Utility/Common.hpp"
+#include "CrystalAlgrithm/Scene/Scene.h"
 
 #define DisplayWidget_Debug true
 
 namespace CrystalGUI {
 
+RenderingThread::RenderingThread(QObject* parent) : QThread(parent) {
+    if (DisplayWidget_Debug && !CloseAllDebugInfo) {
+        Print_Gui_Info("Create RenderingThread Object");
+    }
+    runFlag = true;
+}
+RenderingThread::~RenderingThread() {
+    if (DisplayWidget_Debug && !CloseAllDebugInfo) {
+        Print_Gui_Info("Destroy RenderingThread Object");
+    }
+}
+void RenderingThread::run() {
+
+    qint64 minInterval = 20;
+
+    while (runFlag) {
+        QElapsedTimer timer;
+        timer.start();
+
+        m_Scene->film.setColorChanged(m_Scene->film.finalUChar4Buffer_host);
+
+        emit finishRenderAFrame();
+
+        
+
+        qint64 elapsedMilliseconds = timer.elapsed();
+        while (timer.elapsed() < minInterval);
+    }
+
+    if (DisplayWidget_Debug && !CloseAllDebugInfo) {
+        Print_Gui_Info("Stop rendering thread");
+    }
+}
+
+
 DisplayWidget::DisplayWidget(QWidget* parent) { 
     if (DisplayWidget_Debug && !CloseAllDebugInfo) {
         Print_Gui_Info("Create DisplayWidget Object");
     }
+
+    setMinimumWidth(800);
 
     QFile qssfile("Resources/qss/DisplayWindow.qss");
     qssfile.open(QFile::ReadOnly);
@@ -46,6 +86,13 @@ DisplayWidget::DisplayWidget(QWidget* parent) {
     qm.rgbSwap();
     qm.mirror(false, true);
 
+    width = qm.width();
+    height = qm.height();
+    data = qm.bits();
+    needUpdate = true;
+
+    m_RenderingThread = nullptr;
+    m_Scene = nullptr;
 }
 
 DisplayWidget::~DisplayWidget() {
@@ -53,32 +100,33 @@ DisplayWidget::~DisplayWidget() {
         Print_Gui_Info("Destroy DisplayWidget Object");
     }
 
+    m_RenderingThread->runFlag = false;
+    if (m_RenderingThread->isRunning()) {
+        m_RenderingThread->quit();
+        m_RenderingThread->wait();
+    }
+    delete m_RenderingThread;
+
+    makeCurrent();
+    glDeleteTextures(1, &textureID);
+    doneCurrent();
 }
 
 void DisplayWidget::initializeGL() {
 
-    // Enable texturing
-    glEnable(GL_TEXTURE_2D);  
+    initializeOpenGLFunctions();
+    glClearColor(0.0, 0.0, 0.0, 1.0);
 
-    // Obtain an id for the texture
-    glGenTextures(1, &textureID);       
-    // Set as the current texture
-    glBindTexture(GL_TEXTURE_2D, textureID);  
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, qm.width(), qm.height(), 0, GL_RGBA,
-        GL_UNSIGNED_BYTE, qm.bits());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    // Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glDisable(GL_TEXTURE_2D);
 }
 
 void DisplayWidget::resizeGL(int w, int h) {
-
     glViewport(0, 0, w - 1, h - 1);
 }
 
@@ -89,6 +137,14 @@ void DisplayWidget::paintGL() {
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
+    if (needUpdate) {
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, \
+            GL_UNSIGNED_BYTE, imageSrc);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+            GL_UNSIGNED_BYTE, data); 
+
+        needUpdate = false;
+    }
 
     glBegin(GL_QUADS);
     glTexCoord2f(0, 0);
@@ -99,7 +155,6 @@ void DisplayWidget::paintGL() {
     glVertex3f(1, 1, -1);
     glTexCoord2f(0, 1);
     glVertex3f(-1, 1, -1);
-
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -107,8 +162,35 @@ void DisplayWidget::paintGL() {
 
 
 // Set the data source and its size
-void DisplayWidget::setImageData(uchar* imageSrc, uint width, uint height) {
+void DisplayWidget::setImageData(void* imageSrc, uint w, uint h) {
 
+    data = (unsigned char *)imageSrc;
+    width = w;
+    height = h;
+    needUpdate = true;
+
+    update();
+
+}
+
+void DisplayWidget::startRenderScene(CrystalAlgrithm::Scene* s)
+{
+    m_Scene = s;
+    m_RenderingThread = new RenderingThread(this);
+    connect(m_RenderingThread, SIGNAL(finishRenderAFrame()), this, SLOT(onFinishRenderAFrame()));
+
+    m_RenderingThread->m_Scene = m_Scene;
+    m_RenderingThread->start();
+    
+    m_Scene->film.setRed(m_Scene->film.finalUChar4Buffer_host);
+
+    setImageData(m_Scene->film.finalUChar4Buffer_host, \
+        m_Scene->film.resolution.x, m_Scene->film.resolution.y);
+}
+
+void DisplayWidget::onFinishRenderAFrame() {
+    needUpdate = true;
+    update();
 }
 
 

@@ -78,8 +78,8 @@ bool ParserScene::readScalarTransFuncOneNodePropXML(const QDomNodeList& nodes, C
 bool ParserScene::readScalarTransFuncNodePropXML(const QDomNodeList& nodes, CrystalAlgrithm::STF_Preset& stf) {
 	bool readFlag = true;
 
-	CrystalAlgrithm::Spectrum3 Emission(0.0f), Absorption(0.0f), Scattering(0.0f), Diffuse(0.0f), Specular(0.0f), Metallic(0.0f);
-	float NormalizedIntensity(0.0f), DensityScale(1.0f), HG_Phase(0.0f), Opacity(0.0f), Roughness(0.0f);
+	CrystalAlgrithm::Spectrum3 Emission(0.0f), Absorption(0.0f), Scattering(0.0f), Diffuse(0.0f), Specular(0.0f);
+	float NormalizedIntensity(0.0f), DensityScale(1.0f), HG_Phase(0.0f), Opacity(0.0f), Roughness(0.0f), Metallic(0.0f);
 
 	for (int i = 0; i < nodes.count(); i++) {
 		QDomNode childNode = nodes.at(i);

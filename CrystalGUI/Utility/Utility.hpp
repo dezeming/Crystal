@@ -30,6 +30,9 @@ Github site: <https://github.com/dezeming/Crystal>
 #include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QFrame>
+#include <QLabel>
+#include <QPainter>
+#include <QPainterPath>
 
 namespace CrystalGUI {
 
@@ -37,12 +40,12 @@ namespace CrystalGUI {
 class FloatSetter : public QGroupBox {
     Q_OBJECT
 public:
-    FloatSetter(QGroupBox* parent, QString Name, float min, float max);
+    FloatSetter(QWidget* parent, QString Name, float min, float max);
     ~FloatSetter();
 
     void setValue(float val) {
-        slider->setValue(val);
-        spinbox->setValue(val);
+        slider.setValue(val);
+        spinbox.setValue(val);
         value = val;
     }
     void getValue(float& val) {
@@ -52,11 +55,11 @@ public:
 private:
     float value;
 
-    QGridLayout* layout;
+    QGridLayout layout;
 
-    QPushButton* qpb;
-    QDoubleSlider* slider;
-    QDoubleSpinBox* spinbox;
+    QPushButton qpb;
+    QDoubleSlider slider;
+    QDoubleSpinBox spinbox;
 
 signals:
     void signal_valueChanged(double);
@@ -66,44 +69,47 @@ private slots:
 
 };
 
+class RoundedLabel : public QLabel {
+    Q_OBJECT
+public:
+    RoundedLabel(QWidget* parent = nullptr) : QLabel(parent) {
+        setAttribute(Qt::WA_TranslucentBackground);
+    }
+
+protected:
+    void paintEvent(QPaintEvent* event) override {
+        QLabel::paintEvent(event);
+        QPainter painter(this);
+
+        QPainterPath path;
+        path.addRoundedRect(rect(), 10.0, 10.0);
+        QRegion roundedRegion = path.toFillPolygon().toPolygon();
+
+        setMask(roundedRegion);
+    }
+};
+
 class RGBSetter : public QGroupBox {
     Q_OBJECT
 public:
-    RGBSetter(QGroupBox* parent, QString Name);
+    RGBSetter(QGroupBox* parent, QString Name, float val[3], int filler = 3);
     ~RGBSetter();
 
-    void setValue(float val[3]) {
-        value[0] = val[0];
-        value[0] = std::max(std::min(value[0], 1.0f), 0.0f);
-        value[1] = val[1];
-        value[1] = std::max(std::min(value[1], 1.0f), 0.0f);
-        value[2] = val[2];
-        value[2] = std::max(std::min(value[2], 1.0f), 0.0f);
-
-        color.setRed(255.9f * value[0]);
-        color.setGreen(255.9f * value[1]);
-        color.setBlue(255.9f * value[2]);
-
-        QPalette m_palette(color);
-        frame->setPalette(m_palette);
-    }
-    void getValue(float* val) {
-        val[0] = value[0];
-        val[1] = value[1];
-        val[2] = value[2];
-    }
+    void setValue(float val[3]);
+    void getValue(float* val);
     
 private:
     float value[3];
     QColor color;
 
-    QGridLayout* layout;
+    QGridLayout layout;
 
-    QPushButton* qpb;
-    QFrame* frame;
+    QPushButton qpb;
+    QLabel frame;
+    QLabel label;
 
 signals:
-    void signal_valueChanged(const QColor& color);
+    void signal_valueChanged(const float* color);
 
 private slots:
     void slot_valueChanged(const QColor& color);
@@ -111,15 +117,43 @@ private slots:
 
 };
 
+class Margin : public QObject {
+    Q_OBJECT
+public:
+    Margin(QObject* parent = Q_NULLPTR) {
 
+    }
+    Margin(int lb, int rb, int tb, int bb, QObject* parent = Q_NULLPTR) {
+        left2Boundary = lb;
+        right2Boundary = rb;
+        top2Boundary = tb;
+        bottom2Boundary = bb;
+    }
+    ~Margin() {
 
+    }
 
+    Margin& operator = (const Margin& Other) {
+        left2Boundary = Other.left2Boundary;
+        right2Boundary = Other.right2Boundary;
+        top2Boundary = Other.top2Boundary;
+        bottom2Boundary = Other.bottom2Boundary;
+        return *this;
+    }
+    Margin(const Margin& Other) {
+        *this = Other;
+    }
+
+public:
+    int left2Boundary;
+    int right2Boundary;
+    int top2Boundary;
+    int bottom2Boundary;
+};
 
 
 
 }
-
-
 
 #endif
 

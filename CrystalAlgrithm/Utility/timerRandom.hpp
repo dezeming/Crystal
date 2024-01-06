@@ -18,8 +18,8 @@
 */
 
 #pragma once
-#ifndef __timerRandomNum_h__
-#define __timerRandomNum_h__
+#ifndef __algrithm_timerRandomNum_h__
+#define __algrithm_timerRandomNum_h__
 
 #include <stdlib.h>
 #include <ctime>

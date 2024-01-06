@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include"CrystalGUI/utility/Status.hpp"
 
-#include "CrystalAlgrithm/Utility/cpu_Common.hpp"
+#include "CrystalAlgrithm/Utility/Common.hpp"
 
 namespace CrystalGUI {
 

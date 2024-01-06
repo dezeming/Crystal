@@ -29,6 +29,8 @@
 #include "CrystalGUI/InfoPresent/DataPresentDockWidget.hpp"
 #include "CrystalGUI/DataMapper/DataMapperDockWidget.hpp"
 
+#include "CrystalAlgrithm/Scene/Scene.h"
+
 #include <QFile>
 
 #define MainWindowDebug true
@@ -162,7 +164,6 @@ void InitialMainWindow::setupDock(void) {
 }
 
 
-
 DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
 
     if (MainWindowDebug && !CloseAllDebugInfo) {
@@ -186,8 +187,11 @@ DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
     centralWidget->setLayout(mainLayout);
 
     // parse XML File
+    m_Scene = new CrystalAlgrithm::Scene;
     parser.setFilePath(sceneFile);
-    bool readFlag = parser.readSceneXML();
+    bool readFlag = parser.readSceneXML(m_Scene);
+    if (readFlag)
+        readFlag = readFlag && m_Scene->initScene(parser.m_ScenePreset);
     if (!readFlag) {
 
         Print_Gui_Error("Scene file loading unsuccessful!");
@@ -206,12 +210,8 @@ DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
         setupDock();
 
         // start rendering thread
-        //m_QtRenderThread = new QtRenderThread();
-        //m_QtRenderThread->setVisualizer(m_QtVisualizer->m_Visualizer);
-        //m_QtRenderThread->setFrameBuffer(m_QtVisualizer->m_FrameBuffer);
-
-        //m_QtRenderThread->renderBegin();
-        //m_QtRenderThread->start();
+        m_DisplayWidget->startRenderScene(m_Scene);
+        
        // connect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
 
         // Test
@@ -219,10 +219,10 @@ DisplayMainWindow::DisplayMainWindow(QString sceneFile, QWidget* parent) {
         // CrystalAlgrithm::SpectrumTest();
     }
 
-    bool writeFlag = parser.writeSceneXML("./OutputScene");
+    /*bool writeFlag = parser.writeSceneXML("./OutputScene");
     if (!writeFlag) {
         Print_Gui_Error("Scene file write unsuccessful!");
-    }
+    }*/
 
 
 }
@@ -232,6 +232,8 @@ DisplayMainWindow::~DisplayMainWindow() {
     if (MainWindowDebug && !CloseAllDebugInfo) {
         Print_Gui_Info("Destroy DisplayMainWindow Object");
     }  
+
+    delete m_Scene;
 
     //disconnect(m_QtRenderThread, SIGNAL(generateNewFrame()), displayWidget, SLOT(displayNewFrame()));
     /*

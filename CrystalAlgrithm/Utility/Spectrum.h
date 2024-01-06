@@ -17,8 +17,8 @@
     Github site: <https://github.com/dezeming/Crystal>
 */
 
-#ifndef __Spectrum_h__
-#define __Spectrum_h__
+#ifndef __algrithm_Spectrum_h__
+#define __algrithm_Spectrum_h__
 
 #include "CrystalAlgrithm/Utility/cuda_Common.cuh"
 
@@ -161,7 +161,7 @@ public:
     }
     HOST_AND_DEVICE bool HasNaNs() const {
         for (int i = 0; i < 3; ++i)
-            if (std::isnan(c[i])) return true;
+            if (CrystalAlgrithm::isNaN(c[i])) return true;
         return false;
     }
     HOST_AND_DEVICE float& operator[](int i) {

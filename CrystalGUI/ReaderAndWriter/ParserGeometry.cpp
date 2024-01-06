@@ -65,8 +65,42 @@ bool ParserScene::readMedicalVolumeData(const QDomNodeList& nodes) {
 		}
 		else if ("Transform" == tag) {
 			
+			QDomNodeList transformNodes = childNode.childNodes();
+			for (int i = 0; i < transformNodes.count(); i++) {
+				QDomNode transchildNode = transformNodes.at(i);
+				QString childTag = transchildNode.toElement().tagName();
+				if (childTag == "Permute") {
+					std::string axis = transchildNode.toElement().attribute("Axis").toStdString();
+					std::vector<unsigned int> axisValue = stringToUIntVector(axis, ",");
+					if (axisValue.size() != 3) {
+						readFlag = false;
+						Print_Gui_Error("Incorrect number of data loads");
+						break;
+					}
+					m_ScenePreset.m_MedicalVolumeDataPreset.permute
+						= CrystalAlgrithm::Vector3ui(axisValue[0], axisValue[1], axisValue[2]);
+				}
+				else if (childTag == "RotateXY") {
+					
+					float rotateX = transchildNode.toElement().attribute("X").toFloat();
+					float rotateY = transchildNode.toElement().attribute("Y").toFloat();
 
-
+					m_ScenePreset.m_MedicalVolumeDataPreset.RotateXY.x = rotateX;
+					m_ScenePreset.m_MedicalVolumeDataPreset.RotateXY.y = rotateY;
+				}
+				else if (childTag == "Translate") {
+					m_ScenePreset.m_MedicalVolumeDataPreset.Translate_V.x
+						= transchildNode.toElement().attribute("X").toFloat();
+					m_ScenePreset.m_MedicalVolumeDataPreset.Translate_V.y
+						= transchildNode.toElement().attribute("Y").toFloat();
+					m_ScenePreset.m_MedicalVolumeDataPreset.Translate_V.z
+						= transchildNode.toElement().attribute("Z").toFloat();
+				}
+				else {
+					readFlag = false;
+					Print_Gui_Error("Unwanted tag name " + childTag.toStdString() +  "while parsering Scene Xml: " + tag.toStdString());
+				}
+			}
 
 		}
 		else if ("Structure" == tag) {

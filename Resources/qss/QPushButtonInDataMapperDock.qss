@@ -1,0 +1,16 @@
+QPushButton {
+    background-color: #4CAF50; 
+    color: white; 
+    border: 1px solid #4CAF50; 
+    border-radius: 5px; 
+    padding: 5px 10px; 
+}
+
+QPushButton:hover {
+    background-color: #45a049; 
+}
+
+QPushButton:pressed {
+    background-color: #36802d; 
+}
+

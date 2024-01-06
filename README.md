@@ -1,6 +1,6 @@
 # <img src="Resources/Images/logo.png" width="150" >
 
-> <font size=5>Crystal - A `modern`, `fashionable`, `high-quality` 3D visualization tool for medical images</font>
+> <font size=5>Crystal - A `modern`, `fashionable`, `high-quality` 3D volume rendering tool for medical images</font>
 
 <img src="Resources/Images/cVRT1.png" width="390" >
 

@@ -34,6 +34,10 @@
 
 #include "CrystalAlgrithm/Scene/ScenePreset.h"
 
+namespace CrystalAlgrithm {
+	class Scene;
+}
+
 namespace CrystalGUI {
 
 inline QString obtainDirFromFilePath(QString filepath) {
@@ -61,6 +65,8 @@ inline QString obtainFileNameFromFilePath(QString filepath) {
 std::vector<float> stringToFloatVector(std::string input, std::string separator = ",");
 std::vector<unsigned int> stringToUIntVector(std::string input, std::string separator = ",");
 
+
+
 class ParserScene : public QObject {
 	Q_OBJECT
 
@@ -76,7 +82,7 @@ public:
 	}
 
 	// Reader
-	bool readSceneXML();
+	bool readSceneXML(CrystalAlgrithm::Scene* scene);
 
 	bool readSceneCameraXML(const QDomNodeList& nodes);
 	bool readSceneFilmXML(const QDomNodeList& nodes);
@@ -107,6 +113,7 @@ public:
 	bool InspectorScene();
 
 	CrystalAlgrithm::ScenePreset m_ScenePreset;
+	CrystalAlgrithm::Scene* m_Scene;
 
 private:
 

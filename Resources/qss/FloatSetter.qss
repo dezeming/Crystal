@@ -1,0 +1,43 @@
+QGroupBox {
+	border: 2px solid #4CAF50;
+	border-radius: 5px;
+	margin-top: 1ex;
+	background-color: #ACAFA0;
+	padding: -2px;
+}
+
+QDoubleSpinBox {
+    border: 1px solid #bbb; 
+	border-radius: 5px; 
+    padding: 2px; 
+}
+
+QSlider::groove:horizontal {
+    border: 1px solid #999999;
+    height: 8px;
+    background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 #B1B1B1, stop: 1 #909090);
+    margin: 2px 0;
+	border-radius: 3px;
+}
+QSlider::handle:horizontal {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #EEEEEE, stop: 1 #DDDDDD);
+    border: 2px solid #999999;
+    width: 15px;
+	height: 25px;
+	subcontrol-origin: margin;
+	subcontrol-position: top;
+    margin: -5px 0;
+    border-radius: 5px;
+}
+QSlider::handle:horizontal:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #F6F6F6, stop: 1 #EEEEEE);
+    border: 1px solid #777777;
+}
+QSlider::sub-page:horizontal {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #786FAD, stop: 1 #54429A);
+}
+QSlider::add-page:horizontal {
+    background: #FFFFFF;
+    border: 1px solid #999999;
+    width: 1px;
+}

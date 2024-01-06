@@ -32,15 +32,43 @@
 #include <QOpenGLTexture>
 #include <QOpenGLWidget>
 
+#include <QThread>
+
+namespace CrystalAlgrithm {
+    class Scene;
+}
+
+
 namespace CrystalGUI {
 
-class DisplayWidget : public QOpenGLWidget {
+class DisplayWidget;
+class RenderingThread : public QThread {
+    Q_OBJECT
+public:
+    RenderingThread(QObject* parent = nullptr);
+    ~RenderingThread();
+
+protected:
+    void run() override;
+private:
+    CrystalAlgrithm::Scene* m_Scene;
+
+    bool runFlag;
+    friend class DisplayWidget;
+
+signals:
+    void finishRenderAFrame();
+
+};
+
+class DisplayWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 public:
     explicit DisplayWidget(QWidget* parent = 0);
     ~DisplayWidget();
+    void startRenderScene(CrystalAlgrithm::Scene* s);
 
-    void setImageData(uchar* imageSrc, uint width, uint height);
+    void setImageData(void* imageSrc, uint width, uint height);
 
 protected:
     void initializeGL() Q_DECL_OVERRIDE;
@@ -52,6 +80,16 @@ protected:
 
 private:
     GLuint textureID;
+
+    bool needUpdate;
+    unsigned char* data;
+    unsigned int width, height;
+
+private:
+    CrystalAlgrithm::Scene* m_Scene;
+    RenderingThread *m_RenderingThread;
+private slots:
+    void onFinishRenderAFrame();
 
 };
 

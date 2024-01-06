@@ -17,8 +17,8 @@
     Github site: <https://github.com/dezeming/Crystal>
 */
 
-#ifndef __CUDA_COMMON_CUH__
-#define __CUDA_COMMON_CUH__
+#ifndef __algrithm_CUDA_COMMON_CUH__
+#define __algrithm_CUDA_COMMON_CUH__
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -48,11 +48,23 @@ namespace CrystalAlgrithm {
 #define DCHECK_GE(a, b) EMPTY_CHECK
 #define DCHECK_LT(a, b) EMPTY_CHECK
 #define DCHECK_LE(a, b) EMPTY_CHECK
+#define CHECK_EQ(a,b) EMPTY_CHECK
 
 #define M_PI 3.1415926f
 #define OneOver4PI 0.07957747f
+
+static constexpr float InvPi = 0.31830988618379067154;
+static constexpr float Inv2Pi = 0.15915494309189533577;
+static constexpr float Inv4Pi = 0.07957747154594766788;
+static constexpr float PiOver2 = 1.57079632679489661923;
+static constexpr float PiOver4 = 0.78539816339744830961;
+
 #define INV_M_PI 0.3183099f
 #define ANGLE(angle) (angle * M_PI / 180.0f)
+
+static constexpr float FloatOneMinusEpsilon = 0x1.fffffep-1;
+static constexpr float OneMinusEpsilon = FloatOneMinusEpsilon;
+
 
 #define MaxFloat std::numeric_limits<float>::max()
 #define Infinity std::numeric_limits<float>::infinity()
@@ -69,6 +81,12 @@ HOST_AND_DEVICE inline float Clamp(float val, float low, float high) {
         return val;
 }
 HOST_AND_DEVICE inline float Lerp(float t, float v1, float v2) { return (1 - t) * v1 + t * v2; }
+
+template <typename T>
+inline HOST_AND_DEVICE typename std::enable_if_t<std::is_floating_point_v<T>, bool> isNaN(
+    T v) {
+    return std::isnan(v);
+}
 
 #define COUT_RED(STRING) std::cout<<"\033[1;31m"<<STRING<<"\033[0m"
 #define COUT_GREEN(STRING) std::cout<<"\033[1;32m"<<STRING<<"\033[m"
@@ -96,6 +114,7 @@ inline void getCpuInfo(std::string info, const char* file, int line) {
 #define Print_CPU_Error( err ) (getCpuError( err, __FILE__, __LINE__ ))
 #define Print_CPU_Info( info ) (getCpuInfo( info, __FILE__, __LINE__ ))
 
+#define DisablePrintInfo false
 
 
 }

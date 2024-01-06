@@ -36,20 +36,29 @@
 
 #define ParserSceneDebug true
 
+#include "CrystalAlgrithm/Scene/Scene.h"
+
 namespace CrystalGUI {
 
+
+
 ParserScene::ParserScene(QObject* parent) {
-
-}
-
-ParserScene::~ParserScene() {
 	if (ParserSceneDebug && !CloseAllDebugInfo) {
 		Print_Gui_Info("Create ParserScene Object");
 	}
 }
 
-bool ParserScene::readSceneXML() {
+ParserScene::~ParserScene() {
+	if (ParserSceneDebug && !CloseAllDebugInfo) {
+		Print_Gui_Info("Destroy ParserScene Object");
+	}
+}
 
+bool ParserScene::readSceneXML(CrystalAlgrithm::Scene* scene) {
+	if (!scene) {
+		Print_Gui_Error("scene point is nullptr ");
+	}
+	m_Scene = scene;
 	if (sceneFilePath == "") {
 		Print_Gui_Error("(filePath == \"\")");
 		return false;
@@ -145,7 +154,7 @@ bool ParserScene::readSceneCameraXML(const QDomNodeList& nodes) {
 		QString tag = childNode.toElement().tagName();
 		if ("CameraType" == tag) {
 			m_ScenePreset.m_CameraPreset.CameraType =
-				childNode.toElement().attribute("type").toStdString();
+				childNode.toElement().attribute("value").toStdString();
 		}
 		else if("Fov" == tag) {
 			m_ScenePreset.m_CameraPreset.fov = 
@@ -193,7 +202,7 @@ bool ParserScene::readSceneFilmXML(const QDomNodeList& nodes) {
 	for (int i = 0; i < nodes.count(); i++) {
 		QDomNode childNode = nodes.at(i);
 		QString tag = childNode.toElement().tagName();
-		if ("FrameBufferSize" == tag) {
+		if ("Resolution" == tag) {
 			m_ScenePreset.m_FilmPreset.width =
 				childNode.toElement().attribute("width").toULongLong();
 			m_ScenePreset.m_FilmPreset.height =
@@ -215,9 +224,9 @@ bool ParserScene::readSceneVisualizerXML(const QDomNodeList& nodes) {
 	for (int i = 0; i < nodes.count(); i++) {
 		QDomNode childNode = nodes.at(i);
 		QString tag = childNode.toElement().tagName();
-		if ("Visualizer" == tag) {
+		if ("VisualizerType" == tag) {
 			m_ScenePreset.m_VisualizerPreset.VisualizerType =
-				childNode.toElement().attribute("type").toStdString();
+				childNode.toElement().attribute("value").toStdString();
 		}
 		else {
 			readFlag = false;
@@ -238,7 +247,7 @@ bool ParserScene::readSceneGeometryXML(const QDomNodeList& nodes) {
 		QString tag = childNode.toElement().tagName();
 		if ("GeometryFileName" == tag) {
 			m_ScenePreset.GeometryFileName =
-				childNode.toElement().attribute("file").toStdString();
+				childNode.toElement().attribute("value").toStdString();
 		}
 		else {
 			readFlag = false;
@@ -320,7 +329,7 @@ bool ParserScene::readSceneDataMapperXML(const QDomNodeList& nodes) {
 		QString tag = childNode.toElement().tagName();
 		if ("DataMapperFileName" == tag) {
 			m_ScenePreset.DataMapperFileName =
-				childNode.toElement().attribute("file").toStdString();
+				childNode.toElement().attribute("value").toStdString();
 		}
 		else {
 			readFlag = false;
@@ -450,6 +459,7 @@ bool ParserScene::writeSceneXML(QString folderPath) {
 
 	return true;
 }
+
 
 
 std::vector<float> stringToFloatVector(std::string input, std::string separator) {

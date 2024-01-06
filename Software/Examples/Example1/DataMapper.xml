@@ -1,0 +1,62 @@
+<DataMapper> 
+	<ScalarTransferFunction>
+		<Type value="Intensity" />
+		<GlobalProperties>
+		</GlobalProperties>
+		<OneNodeProperties>
+			<DensityScale components="1" type="float" RangeBtn="0.1" RangeTop="10.0" />
+			<Opacity components="1" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Diffuse components="3" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Specular components="3" type="float" RangeBtn="0" RangeTop="1.0" />
+			<Roughness components="1" type="float" RangeBtn="0" RangeTop="1.0" />
+		</OneNodeProperties>
+		<NodesPropertiesArray>
+			<Node>
+				<NormalizedIntensity value="0"/>
+				<DensityScale value="5.0" />
+				<Opacity value="0"/>
+				<Diffuse G="0.3" R="0.5" B="0.2"/>
+				<Specular G="0.3" R="0.5" B="0.2"/>
+				<Roughness value="0.5"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="0.23597"/>
+				<DensityScale value="5.0" />
+				<Opacity value="0.4"/>
+				<Diffuse G="0.3" R="0.5" B="0.2"/>
+				<Specular G="0.3" R="0.5" B="0.2"/>
+				<Roughness value="0.5"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="1"/>
+				<DensityScale value="5.0" />
+				<Opacity value="0.4"/>
+				<Diffuse G="0.3" R="0.5" B="0.2"/>
+				<Specular G="0.3" R="0.5" B="0.2"/>
+				<Roughness value="0.5"/>
+			</Node>
+		</NodesPropertiesArray>
+	</ScalarTransferFunction>
+	<ScalarTransferFunction>
+		<Type value="GradientMagnitude" />
+		<GlobalProperties>
+		</GlobalProperties>
+		<OneNodeProperties>
+			<Opacity components="1" type="float" RangeBtn="0" RangeTop="1.0" />
+		</OneNodeProperties>
+		<NodesPropertiesArray>
+			<Node>
+				<NormalizedIntensity value="0"/>
+				<Opacity value="1.0"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="0.23597"/>
+				<Opacity value="1.0"/>
+			</Node>
+			<Node>
+				<NormalizedIntensity value="1"/>
+				<Opacity value="1.0"/>
+			</Node>
+		</NodesPropertiesArray>
+	</ScalarTransferFunction>
+</DataMapper>

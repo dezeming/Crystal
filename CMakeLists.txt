@@ -106,6 +106,10 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Build into static libraries
 set (BUILD_SHARED_LIBS OFF)
 
+# tinyobj
+
+set (TINYOBJ_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/tinyobj)
+
 # stb
 
 set (STB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/stb)
@@ -173,6 +177,7 @@ INCLUDE_DIRECTORIES(
 	${STB_INCLUDE}
 	${ZLIB_INCLUDE_DIRS}
 	${OPENEXR_INCLUDE}
+	${TINYOBJ_INCLUDE}
 	# Nvidia
 	${CUDA_INCLUDE_DIRS}
 	${Optix_INCLUDE_DIR}
@@ -184,16 +189,13 @@ INCLUDE_DIRECTORIES(
 
 set (BUILD_SHARED_LIBS OFF)
 
-# macros predefined 
-add_compile_definitions(_EXPORTING)
-
 # Program output directory
 set(publish_debug ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${publish_debug})
 set(publish_release ${CMAKE_CURRENT_BINARY_DIR}/Release)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${publish_release})
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${publish_release})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${publish_release})
 #set(publish_relwithdebuginfo ${CMAKE_CURRENT_BINARY_DIR}/Relwithdebuginfo)
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${publish_relwithdebuginfo})
@@ -210,12 +212,14 @@ endif()
 
 # Utility
 set(Utility
-	CrystalAlgrithm/Utility/cpu_Common.hpp
-	CrystalAlgrithm/Utility/cpu_Common.cpp
-	CrystalAlgrithm/Utility/cuda_common.cuh
-	CrystalAlgrithm/Utility/cuda_common.cu
-	CrystalAlgrithm/Utility/timerRandom.hpp
-	CrystalAlgrithm/Utility/timerRandom.cpp
+	CrystalAlgrithm/Utility/Common.hpp
+	CrystalAlgrithm/Utility/Common.cpp
+	CrystalAlgrithm/Utility/RNG.h
+	CrystalAlgrithm/Utility/Sampling.h
+	CrystalAlgrithm/Utility/Cuda_Common.cuh
+	CrystalAlgrithm/Utility/Cuda_Common.cu
+	CrystalAlgrithm/Utility/TimerRandom.hpp
+	CrystalAlgrithm/Utility/TimerRandom.cpp
 	CrystalAlgrithm/Utility/Geometry.h
 	CrystalAlgrithm/Utility/Geometry.cpp
 	CrystalAlgrithm/Utility/Transform.h
@@ -236,12 +240,104 @@ set(Scene
 # Make the Scene group
 SOURCE_GROUP("Scene" FILES ${Scene})
 
+# Camera
+set(Camera
+	CrystalAlgrithm/Camera/Camera.h
+	CrystalAlgrithm/Camera/Camera.cu
+)
+# Make the Camera group
+SOURCE_GROUP("Camera" FILES ${Camera})
+
+# Light
+set(Light
+	CrystalAlgrithm/Light/Light.h
+	CrystalAlgrithm/Light/Light.cu
+)
+# Make the Light group
+SOURCE_GROUP("Light" FILES ${Light})
+
+# DataMapper
+set(DataMapper
+	CrystalAlgrithm/DataMapper/STF.h
+	CrystalAlgrithm/DataMapper/STF.cu
+)
+# Make the DataMapper group
+SOURCE_GROUP("DataMapper" FILES ${DataMapper})
+
+# Material
+set(Material
+	CrystalAlgrithm/Material/Material.h
+	CrystalAlgrithm/Material/Material.cu
+	CrystalAlgrithm/Material/Texture.h
+	CrystalAlgrithm/Material/Texture.cu
+	CrystalAlgrithm/Material/ScatteringDistribution.h
+	CrystalAlgrithm/Material/ScatteringDistribution.cu
+	CrystalAlgrithm/Material/metal.h
+	CrystalAlgrithm/Material/metal.cu
+	CrystalAlgrithm/Material/lambertian.h
+	CrystalAlgrithm/Material/lambertian.cu
+	CrystalAlgrithm/Material/specular.h
+	CrystalAlgrithm/Material/specular.cu
+	CrystalAlgrithm/Material/Henyey-Greenstein.h
+	CrystalAlgrithm/Material/Henyey-Greenstein.cu
+)
+# Make the Material group
+SOURCE_GROUP("Material" FILES ${Material})
+
+# Shape
+set(Shape
+	CrystalAlgrithm/Shape/shape.h
+	CrystalAlgrithm/Shape/shape.cu
+	CrystalAlgrithm/Shape/bvhTree.h
+	CrystalAlgrithm/Shape/bvhTree.cu
+	CrystalAlgrithm/Shape/surface.h
+	CrystalAlgrithm/Shape/surface.cu
+	CrystalAlgrithm/Shape/sphere.h
+	CrystalAlgrithm/Shape/sphere.cu
+	CrystalAlgrithm/Shape/Primitive.h
+	CrystalAlgrithm/Shape/Primitive.cu
+)
+# Make the Shape group
+SOURCE_GROUP("Shape" FILES ${Shape})
+
+# Volume
+set(Volume
+	CrystalAlgrithm/Volume/Volume.h
+	CrystalAlgrithm/Volume/Volume.cu
+	CrystalAlgrithm/Volume/Texture3DVolume.h
+	CrystalAlgrithm/Volume/Texture3DVolume.cu
+	CrystalAlgrithm/Volume/OctreeVolume.h
+	CrystalAlgrithm/Volume/OctreeVolume.cu
+)
+# Make the Volume group
+SOURCE_GROUP("Volume" FILES ${Volume})
+
+# Visualizer
+set(Visualizer
+	CrystalAlgrithm/Visualizer/Visualizer.h
+	CrystalAlgrithm/Visualizer/Visualizer.cu
+	CrystalAlgrithm/Visualizer/EmissionAbsorption.h
+	CrystalAlgrithm/Visualizer/EmissionAbsorption.cu
+	CrystalAlgrithm/Visualizer/GradientShading.h
+	CrystalAlgrithm/Visualizer/GradientShading.cu
+	CrystalAlgrithm/Visualizer/KroesSingleScattering.h
+	CrystalAlgrithm/Visualizer/KroesSingleScattering.cu
+)
+# Make the Visualizer group
+SOURCE_GROUP("Visualizer" FILES ${Visualizer})
 
 #set(CMAKE_BUILD_TYPE "release")
 
-cuda_add_library(CrystalAlgrithm STATIC 
+cuda_add_library(CrystalAlgrithm SHARED 
 	${Utility}
 	${Scene}
+	${Camera}
+	${Light}
+	${DataMapper}
+	${Material}
+	${Shape}
+	${Volume}
+	${Visualizer}
 )
 # Do not generate dynamic link libraries
 #cuda_add_library(CrystalAlgrithm SHARED ${Utility} )
@@ -261,6 +357,9 @@ target_link_libraries (CrystalAlgrithm
 set_target_properties(CrystalAlgrithm PROPERTIES CUDA_ARCHITECTURES "35;52")
 target_compile_features(CrystalAlgrithm PUBLIC cxx_std_17)
 target_compile_features(CrystalAlgrithm PUBLIC cuda_std_11)
+
+# macros predefined 
+target_compile_definitions(CrystalAlgrithm PRIVATE _EXPORTING)
 
 ########################################################################
 ######################### Crystal GUI Project ##########################

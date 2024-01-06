@@ -23,40 +23,67 @@ Github site: <https://github.com/dezeming/Crystal>
 #include "Utility.hpp"
 
 #include <QColorDialog>
+#include <QLabel>
+
+#include "CrystalGUI/Utility/Common.hpp"
+
+#include <QFile>
+
+#define UtilityDebug true
 
 namespace CrystalGUI {
 
 
-FloatSetter::FloatSetter(QGroupBox* parent, QString Name, float min, float max) {
+FloatSetter::FloatSetter(QWidget* parent, QString Name, float min, float max) : QGroupBox(parent) {
+    if (!CloseAllDebugInfo && UtilityDebug) {
+        Print_Gui_Info("Create FloatSetter Object");
+    }
+    QFile qssfile("Resources/qss/FloatSetter.qss");
+    qssfile.open(QFile::ReadOnly);
+    QString styleSheet = QString::fromLatin1(qssfile.readAll());
+    this->setStyleSheet(styleSheet);
 
-    layout = new QGridLayout;
+    setMinimumHeight(50);
 
-    qpb = new QPushButton;
-    slider = new QDoubleSlider;
-    spinbox = new QDoubleSpinBox;
+    setLayout(&layout);
 
-    slider->setMinimum((float)min);
-    slider->setMaximum((float)max);
-    spinbox->setMinimum((float)min);
-    spinbox->setMaximum((float)max);
+    qpb.setText(Name);
+    qpb.setMinimumWidth(90);
+    layout.addWidget(&qpb, 0, 0);
 
-    qpb->setText(Name);
+    QFile qss_pb_file("Resources/qss/FloatSetter_QPushButton.qss");
+    qss_pb_file.open(QFile::ReadOnly);
+    QString styleSheet_pb = QString::fromLatin1(qss_pb_file.readAll());
+    qpb.setStyleSheet(styleSheet_pb);
 
-    layout->addWidget(qpb, 0, 0);
-    layout->addWidget(slider, 0, 1);
-    layout->addWidget(spinbox, 0, 2);
+    slider.setMinimum((float)min);
+    slider.setMaximum((float)max);
+    spinbox.setMinimum((float)min);
+    spinbox.setMaximum((float)max);
+    spinbox.setSingleStep(((float)max - (float)min) * 0.01f);
 
-    setLayout(layout);
+    spinbox.setMinimumWidth(45);
 
-    connect(slider, SIGNAL(valueChanged(double)), spinbox, SLOT(setValue(double)));
-    connect(spinbox, SIGNAL(valueChanged(double)), slider, SLOT(setValue(double)));
-    connect(spinbox, SIGNAL(valueChanged(double)), this, SLOT(slot_valueChanged(double)));
+    layout.addWidget(&spinbox, 0, 1);
+    layout.addWidget(&slider, 0, 2);
+
+    layout.setColumnStretch(0, 3);
+    layout.setColumnStretch(1, 2);
+    layout.setColumnStretch(2, 7);
+
+    connect(&slider, SIGNAL(valueChanged(double)), &spinbox, SLOT(setValue(double)));
+    connect(&spinbox, SIGNAL(valueChanged(double)), &slider, SLOT(setValue(double)));
+    connect(&spinbox, SIGNAL(valueChanged(double)), this, SLOT(slot_valueChanged(double)));
 
 }
 
 FloatSetter::~FloatSetter() {
-    disconnect(slider, 0, 0, 0);
-    disconnect(spinbox, 0, 0, 0);
+    if (!CloseAllDebugInfo && UtilityDebug) {
+        Print_Gui_Info("Distroy FloatSetter Object");
+    }
+
+    disconnect(&slider, 0, 0, 0);
+    disconnect(&spinbox, 0, 0, 0);
 }
 
 void FloatSetter::slot_valueChanged(double val) {
@@ -65,48 +92,87 @@ void FloatSetter::slot_valueChanged(double val) {
 }
 
 
-RGBSetter::RGBSetter(QGroupBox* parent, QString Name) {
+RGBSetter::RGBSetter(QGroupBox* parent, QString Name, float val[3], int filler) : QGroupBox(parent) {
+    QFile qssfile("Resources/qss/RGBSetter.qss");
+    qssfile.open(QFile::ReadOnly);
+    QString styleSheet = QString::fromLatin1(qssfile.readAll());
+    this->setStyleSheet(styleSheet);
 
-    layout = new QGridLayout;
+    setMinimumHeight(50);
 
-    qpb = new QPushButton;
-    qpb->setText(Name);
+    setLayout(&layout);
 
-    frame = new QFrame;
-    frame->setLineWidth(2);
-    frame->setAutoFillBackground(true);
-    frame->setFrameShape(QFrame::Box);
-    
-    layout->addWidget(qpb, 0, 0);
-    layout->addWidget(frame, 0, 1);
+    qpb.setText(Name);
+    qpb.setMinimumWidth(90);
+    layout.addWidget(&qpb, 0, 0);
 
-    color.setRgb(126, 237, 13);
+    QFile qss_pb_file("Resources/qss/RGBSetter_QPushButton.qss");
+    qss_pb_file.open(QFile::ReadOnly);
+    QString styleSheet_pb = QString::fromLatin1(qss_pb_file.readAll());
+    qpb.setStyleSheet(styleSheet_pb);
+
+    frame.setAutoFillBackground(true);
+    frame.setMinimumWidth(45);
+    frame.setMinimumHeight(20);
+
+    color.setRgb(255.99 * val[0], 255.99 * val[1], 255.99 * val[2]);
     QPalette palette(color);
     palette.setColor(QPalette::Window, color);
-    frame->setPalette(palette);
-
-    setLayout(layout);
-
-    connect(qpb, SIGNAL(clicked()), this, SLOT(slot_setValue()));
+    frame.setPalette(palette);
     
+    layout.addWidget(&frame, 0, 1);
+
+    if (filler == 3) {
+        layout.addWidget(&label, 0, 2);
+    }
+
+    if (filler = 3) {
+        layout.setColumnStretch(0, 3);
+        layout.setColumnStretch(1, 2);
+        layout.setColumnStretch(2, 7);
+    }
+
+    connect(&qpb, SIGNAL(clicked()), this, SLOT(slot_setValue()));
 }
+
 RGBSetter::~RGBSetter() {
 
-    disconnect(qpb, 0, 0, 0);
+    disconnect(&qpb, 0, 0, 0);
+}
+
+void RGBSetter::setValue(float val[3]) {
+    value[0] = val[0];
+    value[0] = std::max(std::min(value[0], 1.0f), 0.0f);
+    value[1] = val[1];
+    value[1] = std::max(std::min(value[1], 1.0f), 0.0f);
+    value[2] = val[2];
+    value[2] = std::max(std::min(value[2], 1.0f), 0.0f);
+
+    color.setRed(255.9f * value[0]);
+    color.setGreen(255.9f * value[1]);
+    color.setBlue(255.9f * value[2]);
+
+    QPalette m_palette(color);
+    frame.setPalette(m_palette);
+}
+void RGBSetter::getValue(float* val) {
+    val[0] = value[0];
+    val[1] = value[1];
+    val[2] = value[2];
 }
 
 void RGBSetter::slot_valueChanged(const QColor& val) {
     color = val;
-
-    value[0] = 1.0f / 255.0f * val.red();
-    value[1] = 1.0f / 255.0f * val.green();
-    value[2] = 1.0f / 255.0f * val.blue();
+    const float Inv255 = 1.0f / 255.0f;
+    value[0] = Inv255 * val.red();
+    value[1] = Inv255 * val.green();
+    value[2] = Inv255 * val.blue();
 
     QPalette palette(color);
     palette.setColor(QPalette::Window, color);
-    frame->setPalette(palette);
+    frame.setPalette(palette);
 
-    emit signal_valueChanged(color);
+    emit signal_valueChanged(value);
 }
 void RGBSetter::slot_setValue() {
     QColorDialog ColorDialog(color);
